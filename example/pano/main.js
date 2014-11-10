@@ -1,9 +1,12 @@
 Four.ready(function(){
 
-    var DragController = Four.plugin.DragController;   
-
     var container = document.getElementById('container');
 
+    var pano = new Panorama(container, '0100220000130728113723966J3');
+    return;
+
+    var DragController = Four.plugin.DragController;   
+    var container = document.getElementById('container');
     var camera =  new Four.GLCamera(55, container.clientWidth / container.clientHeight, 0.01, 1000);
     var scene =  new Four.GLScene();
     var renderer = new Four.GLRender(container);

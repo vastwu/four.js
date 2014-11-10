@@ -45,6 +45,7 @@ define(function(require){
         if(z || z === 0){
             this.translate.scale[2] = z;
         }
+        return this;
     }
     gp.position = function(x, y, z){
         if(x || x === 0){
@@ -56,6 +57,7 @@ define(function(require){
         if(z || z === 0){
             this.translate.position[2] = z;
         }
+        return this;
     }
     gp.rotate = function(x, y, z, angle){
         if(x || x === 0){
@@ -70,6 +72,7 @@ define(function(require){
         if(angle || angle === 0){
             this.translate.rotate.rad = angle * Math.PI / 180;
         }
+        return this;
     }
     gp.update = function(){
         mat4.identity(this.modelMatrix);
@@ -77,10 +80,12 @@ define(function(require){
         mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
         mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);  
         this.needUpdate = true;
+        return this;
     }
     gp.bindTexture = function(texture){
         this.texture = texture; 
         this.needUpdate = true;
+        return this;
     }
     gp.setCustomColor = function(colors){
         //交叉数组
@@ -128,6 +133,7 @@ define(function(require){
         //常量颜色, 所有顶点公用颜色
         this.const_color = [r / 255, g / 255, b / 255, a];
         this.needUpdate = true;
+        return this;
     }
     /*
         将顶点索引模式转换为直接绘制孤立三角形模式

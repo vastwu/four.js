@@ -21,6 +21,9 @@ define(function(require){
 
 		radius = radius || 50;
 
+		var x, y, vertices = [], indexes = [], uvs = [],
+			_x, _y, _z, indexOfVertices = -1;
+
 		widthSegments = Math.max( 3, Math.floor( widthSegments ) || 8 );
 		heightSegments = Math.max( 2, Math.floor( heightSegments ) || 6 );
 
@@ -29,9 +32,6 @@ define(function(require){
 
 		thetaStart = thetaStart !== undefined ? thetaStart : 0;
 		thetaLength = thetaLength !== undefined ? thetaLength : Math.PI;
-
-		var x, y, vertices = [], indexes = [], uvs = [],
-			_x, _y, _z, indexOfVertices = -1;
 
 		for ( y = 0; y <= heightSegments; y ++ ) {
 
@@ -54,12 +54,12 @@ define(function(require){
 				});
 				
 				indexOfVertices++;
-
 				verticesRow.push(indexOfVertices);
-				uvsRow.push({
-					'x':u, 
-					'y':1 - v
-				});
+
+                uvsRow.push({
+                    'x':u, 
+                    'y':1 - v
+                });
 			}
 			indexes.push( verticesRow );
 			uvs.push( uvsRow );
@@ -68,11 +68,10 @@ define(function(require){
 		var vec1, vec3, vec3, vec4,
 			indexesOfSphere = [], 
 			indexesOfUvs = [], 
-			heightSegmentsLess = heightSegments - 1,
 			uvArray = [];
 
 		//两极临近的圈少一半的面，其余圈为切分个数的2倍个面数
-		var numberOfFace = (widthSegments * 2 + (2 * widthSegments * (heightSegments - 2)));
+		var numberOfFace = (widthSegments * 2 + (2 * widthSegments * (heightSegments - 1)));
 		//顶点数为面数 * 3
 		var numberOfPoint = numberOfFace * 3;
 
@@ -105,7 +104,9 @@ define(function(require){
 				vec3 = vertices[i3];
 				vec4 = vertices[i4];
 
-				if(y === 0){
+				if(Math.abs(vec1.y) === radius){
+				//if(y === 0){
+                    //北极
 					verticesArray[vn] 	  = vec1.x;
 					verticesArray[vn + 1] = vec1.y; 
 					verticesArray[vn + 2] = vec1.z;
@@ -118,14 +119,16 @@ define(function(require){
 					vn += 9;
 
 					uv1.x = ( uv1.x + uv2.x ) / 2;
-					uvArray[un] = uv1.x;
+					uvArray[un]     = uv1.x;
 					uvArray[un + 1] = uv1.y;
 					uvArray[un + 2] = uv3.x;
 					uvArray[un + 3] = uv3.y;
 					uvArray[un + 4] = uv4.x;
 					uvArray[un + 5] = uv4.y;
 					un += 6;
-				}else if(y === heightSegmentsLess){
+				}else if(Math.abs(vec3.y) === radius){
+				//}else if(y === heightSegmentsLess){
+                    //南极
 					verticesArray[vn] 	  = vec1.x;
 					verticesArray[vn + 1] = vec1.y; 
 					verticesArray[vn + 2] = vec1.z;
@@ -138,7 +141,7 @@ define(function(require){
 					vn += 9;
 
 					uv3.x = ( uv3.x + uv4.x ) / 2;
-					uvArray[un] = uv1.x;
+					uvArray[un]     = uv1.x;
 					uvArray[un + 1] = uv1.y;
 					uvArray[un + 2] = uv2.x;
 					uvArray[un + 3] = uv2.y;

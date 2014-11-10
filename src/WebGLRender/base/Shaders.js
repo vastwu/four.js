@@ -23,7 +23,7 @@ define(function(){
         '   vColor = aVertexColor;',
         '   vTextureCoord = aTextureCoord;',
         '}'
-    ].join('');
+    ].join('\n');
     Shaders.baseFragmentShader = [
         'precision mediump float;',
         'varying vec4 vColor;',
@@ -44,7 +44,7 @@ define(function(){
         '       gl_FragColor = vec4(vColor.rgb, vColor.a * uOpacity);',
         '   }',
         '}'
-    ].join('');
+    ].join('\n');
 
     return Shaders;
 })
