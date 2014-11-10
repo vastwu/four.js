@@ -205,6 +205,7 @@ define(function(require){
 
 	            updateLookAt();
                 self.onDragging(heading, pitch);
+                event.preventDefault();
             }
         }
         var onDragEnd = function(event){

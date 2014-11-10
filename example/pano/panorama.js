@@ -14,7 +14,7 @@ Four.ready(function(){
 
     var createViewer = function(container, dragController){
         var view = document.createElement('div');
-        view.style.cssText = 'border:1px solid red;position:absolute;padding:20px;left:0;top:0;z-index:999;color:white;background-color:rgba(0,0,0,0.8)';
+        view.style.cssText = 'border:1px solid red;position:absolute;padding:10px;left:0;top:0;z-index:999;color:white;background-color:rgba(0,0,0,0.8)';
         container.appendChild(view);
 
         dragController.onPovChanged = function(heading, pitch){
