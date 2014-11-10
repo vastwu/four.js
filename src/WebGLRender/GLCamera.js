@@ -1,5 +1,6 @@
 define(function(require){
-    var mat4 = require('WebGLRender/lib/gl-matrix').mat4;
+    var glMatrix = require('WebGLRender/lib/glMatrix');
+    var mat4 = glMatrix.mat4;
     
     var Camera = function(fovy, aspect, near, far){
         this.fov = fovy * Math.PI / 180;

@@ -1,9 +1,3 @@
-require.config({
-    paths: {
-        "WebGLRender": "../../src/WebGLRender"
-    },
-});
-
 define([
     'WebGLRender/GLCamera',
     'WebGLRender/GLScene',
@@ -18,18 +12,24 @@ define([
 ], function(GLCamera, GLScene, GLRender, GLTexture, 
     g_cube, g_face, g_sphere, g_triangle, 
     p_DragController){
-        var Four = {};
+        var Four = {
+            geometry:{}, 
+            plugin:{}, 
+        };
         Four.GLCamera = GLCamera;
         Four.GLScene = GLScene;
         Four.GLRender = GLRender;
         Four.GLTexture = GLTexture;
 
-        Four.geometry.Cube = g_cube;
-        Four.geometry.Face = g_face;
-        Four.geometry.Sphere = g_sphere;
-        Four.geometry.Triangle = g_triangle;
+        Four.geometry.Cube = Cube;
+        Four.geometry.Face = Face;
+        Four.geometry.Sphere = Sphere;
+        Four.geometry.Triangle = Triangle;
 
-        Four.plugin.DragController = p_DragController;
+        Four.plugin.DragController = DragController;
 
-        window.Four = Four;
-    })
+        Four.ready = function(h){
+            h(Four) 
+        };
+        return Four;
+    });

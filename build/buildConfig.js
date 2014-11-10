@@ -1,6 +1,6 @@
 ({
-    baseUrl:"../",
-    name:"src/WebGLRender/BuildMain.js",
+    baseUrl:"../src",
+    name:"WebGLRender/BuildMain",
     out:"../dist/Four.js",
     wrap:true,
     onBuildWrite:(function(){
@@ -14,10 +14,15 @@
             var var_name = paths.pop();
             
             contents = contents.trim();
-            //define(factory)  =>  var xx = (function());
-            contents = contents.replace( /define\([^{]*{/, "var " + var_name + " = (function(){" )
-                        .replace( rdefineEnd, "})();" );
-            //remove require
+
+            if(/BuildMain/.test(name)){
+                contents = contents.replace( /define\([^{]*{/, "window.Four = (function(){" )
+                    .replace( rdefineEnd, "})()" );
+            }else{
+                //define(factory)  =>  var xx = (function());
+                contents = contents.replace( /define\([^{]*{/, "var " + var_name + " = (function(){" )
+                            .replace( rdefineEnd, "})();" );
+            }
             contents = contents.replace(requireReg, '');
             return contents;
         }
