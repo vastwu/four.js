@@ -34,17 +34,14 @@ define(function(){
         //'uniform vec3 uDiffuse;',
         //'uniform float uOpacity;',
         //'uniform vec4 uRgba;',
-        'uniform vec3 uDiffuse;',
         'uniform float uOpacity;',
 
         'void main(void){',
         '   if (uDrawTexture) {',
-        '       gl_FragColor = vec4(uDiffuse, uOpacity);',
         '       vec4 texelColor = texture2D( uSampler, vTextureCoord);',
-        '       gl_FragColor = gl_FragColor * texelColor;',
-        //'     gl_FragColor = uRgba * texture2D(uSampler, vTextureCoord);',
+        '       gl_FragColor = texelColor * vec4(1.0, 1.0, 1.0, uOpacity);',
         '   } else {',
-        '       gl_FragColor = vColor;',
+        '       gl_FragColor = vec4(vColor.rgb, vColor.a * uOpacity);',
         '   }',
         '}'
     ].join('');

@@ -19,7 +19,7 @@ define(function(require){
         image.onload = function(){
             self._loadCompleted(this); 
         };
-        //image.crossOrigin = 'anonymous';
+        image.crossOrigin = 'anonymous';
         image.src = src;
 
     }

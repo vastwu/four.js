@@ -38,8 +38,6 @@ define(function(require){
         this.uniformItemMatrix = gl.getUniformLocation(shaderProgram, "uItemMatrix");
         this.uniformDrawTexture = gl.getUniformLocation(shaderProgram, "uDrawTexture");
         this.uniformSampler = gl.getUniformLocation(shaderProgram, "uSampler");
-        //this.uniformRgba = gl.getUniformLocation(shaderProgram, "uRgba");
-        this.uniformDiffuse = gl.getUniformLocation(shaderProgram, "uDiffuse");
         this.uniformOpacity = gl.getUniformLocation(shaderProgram, "uOpacity");
 
     }

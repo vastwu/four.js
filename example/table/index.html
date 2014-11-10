@@ -1,7 +1,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src="../../lib/gl-matrix.js"></script>
     <script src="../../lib/require.js"></script>
     <style>
     html,body{
@@ -18,7 +17,10 @@
     </style>
 </head>
 <body>
-    <div id="container"></div>
+    <div id="container">
+        <input type='button' value="add" onclick="addTable()"/> 
+        <input type='button' value="remove" onclick="removeTable()"/> 
+    </div>
    
     <script src="../../src/WebGLRender/Four.js"></script>
     <script src="table.js"></script>

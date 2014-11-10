@@ -13,6 +13,7 @@ define(function(require){
         this.colorStep = 0;
         this.colorSize = 4;
 
+        this.opacity = 1.0;
         this.drawType = GL_CONST.TRIANGLES;
 
         this.vertices = new Float32Array();
@@ -32,7 +33,6 @@ define(function(require){
         };
 
         this.needUpdate = true;
-
     }
     var gp = Geometry.prototype;
     gp.scale = function(x, y, z){

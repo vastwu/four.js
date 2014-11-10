@@ -12,6 +12,8 @@ Four.ready(function(){
     var scene =  new GLScene();
     var renderer = new GLRender(container);
 
+    renderer.enableAlpha();
+
     var table = new MyTable();
     scene.add(table);
 
@@ -22,11 +24,6 @@ Four.ready(function(){
     camera.position.z = 0;
     camera.lookAt(0, 0, 0);
 
-    window.onresize = function(){
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.viewPort(window.innerWidth, window.innerHeight);
-    }
 
     var draw = function(){
         requestAnimationFrame(draw);
@@ -48,5 +45,23 @@ Four.ready(function(){
         }, 10);
     };
     around();
+
+    window.onresize = function(){
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.viewPort(window.innerWidth, window.innerHeight);
+    }
+
+    window.addTable = function(){
+        if(!scene.include(table)){
+            scene.add(table);
+        }
+    }
+    window.removeTable = function(){
+        if(scene.include(table)){
+            scene.remove(table);
+        }
+    }
+
 })
 

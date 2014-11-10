@@ -123,8 +123,12 @@ define(function(require){
             gl.vertexAttribPointer(attr.color, item.colorSize, gl.UNSIGNED_BYTE, true, item.colorStep, item.colorStartIndex);
         }
 
-        gl.uniform3f(program.uniformDiffuse, 1, 1, 1);
-        gl.uniform1f(program.uniformOpacity, 1.0);
+        if(rendererStatus.enableAlpha){
+            var alpha = item.opacity === undefined ? 1.0 : item.opacity; 
+            gl.uniform1f(program.uniformOpacity, alpha);
+        }else{
+            gl.uniform1f(program.uniformOpacity, 1.0);
+        }
 
         gl.drawArrays(gl[item.drawType], 0, item.numberOfVertices);
     }
@@ -145,13 +149,15 @@ define(function(require){
     var Render = function(container){
         var canvas = this._canvas = document.createElement('canvas'); 
         var gl = this._gl = initGLContext(canvas);
-        //深度测试
+        //启用深度测试
         gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
+        gl.depthFunc(gl.LESS);
         //激活面剔除
         gl.enable(gl.CULL_FACE);
         //启用融合
         gl.enable(gl.BLEND);
+        //融合方式
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         var glProgram = this._glProgram = new GLProgram(gl);
         gl.useProgram(glProgram.program);
@@ -160,14 +166,16 @@ define(function(require){
         container.appendChild(canvas);
 
 
-        var rendererStatus = {
-            doubleSide: false
+        var rendererStatus = this.rendererStatus = {
+            doubleSide: false,
+            enableAlpha: false,
+            alpha: false
         }
 
         var renderObjects = function(camera, renderList){
             renderList.forEach(function(obj){
-                if(obj.getItems){
-                    renderObjects(camera, obj.getItems());
+                if(obj.children && obj.children.length > 0){
+                    renderObjects(camera, obj.children);
                 }else{
                     draw(gl, glProgram, rendererStatus, obj, camera);
                 }
@@ -175,11 +183,24 @@ define(function(require){
         }
         this.render = function(camera, scene){
             this.clear();
-            renderObjects(camera, scene.getItems());
+            renderObjects(camera, scene.children);
         }
     }
     var rp = Render.prototype;
-
+    rp.enableAlpha = function(){
+        //使用透明度支持
+        //透明度支持需要启用混合模式,并关闭深度测试
+        var gl = this._gl;
+        gl.disable(gl.DEPTH_TEST);
+        gl.enable(gl.BLEND);
+        this.rendererStatus.enableAlpha = true;
+    }
+    rp.disableAlpha = function(){
+        var gl = this._gl;
+        gl.enable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        this.rendererStatus.enableAlpha = false;
+    }
     rp.viewPort = function(width, height){
         this._canvas.width = width;
         this._canvas.height = height;
