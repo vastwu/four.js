@@ -1,7 +1,8 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
 
-    var Texture = function(src){
+    var Texture = function(src, useCrossOrigin){
+        useCrossOrigin = useCrossOrigin === false ? false : true;
         this.isReady = false;
         this._onload = [];
 
@@ -19,7 +20,9 @@ define(function(require){
         image.onload = function(){
             self._loadCompleted(this); 
         };
-        image.crossOrigin = 'anonymous';
+        if(useCrossOrigin){
+            image.crossOrigin = 'anonymous';
+        }
         image.src = src;
 
     }
