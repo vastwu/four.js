@@ -1,4 +1,30 @@
 Four.ready(function(){
+
+    require(['./Map/Map'], function(Map){
+        var lng = 116.404;
+        var lat = 39.915;
+
+        //var point = util.latLngToMkt(lat, lng);
+        var point = {
+            lat:4825923.77,
+            lng:12958175
+        };
+
+        var z = 14;
+        var container = document.getElementById('container');
+        var map = new Map(container);
+        map.moveTo(point.lat, point.lng);
+        //map.setZoom(14);
+        //map.dragable();
+
+    });
+
+
+
+
+
+
+    return;
     var GLScene = Four.GLScene;
     var GLRender = Four.GLRender;
     var GLCamera = Four.GLCamera;
@@ -8,7 +34,7 @@ Four.ready(function(){
 
     var container = document.getElementById('container');
 
-    var camera =  new PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.01, 1000);
+    var camera =  new GLCamera(65, container.clientWidth / container.clientHeight, 0.01, 1000);
     var scene =  new GLScene();
     var renderer = new GLRender(container);
 

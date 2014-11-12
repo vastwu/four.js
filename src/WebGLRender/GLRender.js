@@ -34,7 +34,7 @@ define(function(require){
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl[texture.minFilter]);
 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-        gl.generateMipmap( gl.TEXTURE_2D );
+        //gl.generateMipmap( gl.TEXTURE_2D );
         return textureBuffer;
     }
 
@@ -155,7 +155,7 @@ define(function(require){
         //激活面剔除
         gl.enable(gl.CULL_FACE);
         //启用融合
-        gl.enable(gl.BLEND);
+        //gl.enable(gl.BLEND);
         //融合方式
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 

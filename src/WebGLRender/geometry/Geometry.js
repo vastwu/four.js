@@ -46,6 +46,7 @@ define(function(require){
         if(z || z === 0){
             this.translate.scale[2] = z;
         }
+        mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);  
         return this;
     }
     gp.position = function(x, y, z){
@@ -58,6 +59,7 @@ define(function(require){
         if(z || z === 0){
             this.translate.position[2] = z;
         }
+        mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
         return this;
     }
     gp.rotate = function(x, y, z, angle){
@@ -73,6 +75,11 @@ define(function(require){
         if(angle || angle === 0){
             this.translate.rotate.rad = angle * Math.PI / 180;
         }
+        mat4.rotate(this.modelMatrix, this.modelMatrix, this.translate.rotate.rad, this.translate.rotate);
+        return this;
+    }
+    gp.reset = function(){
+        mat4.identity(this.modelMatrix);
         return this;
     }
     gp.update = function(){

@@ -1,31 +1,11 @@
 define(function(require){
+    var util = require('WebGLRender/base/util');
 	var ANG_TO_RAD = Math.PI / 180;
-    var isMobile = navigator.userAgent.toLowerCase().match(/iphone|android/);
-
-    var Cache = function(n){
-        var max = n;
-        var arr = [];
-        this.add = function(v){
-            if(arr.length >= max){
-                arr.shift();
-            }
-            arr.push(v);
-        }
-        this.getAverage = function(){
-            var sum = arr.reduce(function(sum, value){
-                return sum + value;
-            })
-            return sum / max;
-        }
-        this.clear = function(){
-            arr = [];
-        }
-    };
 
 	var DragController = function (camera, eventLayer) {
         var self = this;
-        var heading_cache = new Cache(5);
-        var pitch_cache = new Cache(5);
+        var heading_cache = new util.DataStack(5);
+        var pitch_cache = new util.DataStack(5);
 		eventLayer = eventLayer || document;
         var isUserInteracting = false,
             onDragStartMouseX = 0, onDragStartMouseY = 0,
@@ -103,14 +83,18 @@ define(function(require){
         }
         var onMouseWheel = function( event ) {
             // WebKit
+            var fov = camera.fov;
             if ( event.wheelDeltaY ) {
-                camera.fov -= event.wheelDeltaY * 0.05;
+                fov += event.wheelDeltaY * 0.05;
             // Opera / Explorer 9
             } else if ( event.wheelDelta ) {
-                camera.fov -= event.wheelDelta * 0.05;
+                fov += event.wheelDelta * 0.05;
             // Firefox
             } else if ( event.detail ) {
-                camera.fov += event.detail * 1.0;
+                fov -= event.detail * 1.0;
+            }
+            if(fov >= 0 && fov <= 13){
+                camera.fov = fov;
             }
             camera.updateProjectionMatrix();
         }
@@ -271,8 +255,8 @@ define(function(require){
             eventLayer.removeEventListener( 'mousedown', onDragStart, false );
             eventLayer.removeEventListener( 'mousemove', onDragging, false );
             eventLayer.removeEventListener( 'mouseup', onDragEnd, false );
-            eventLayer.removeEventListener( 'mousewheel', onMouseWheel, false );
-            eventLayer.removeEventListener( 'DOMMouseScroll', onMouseWheel, false);    
+            //eventLayer.removeEventListener( 'mousewheel', onMouseWheel, false );
+            //eventLayer.removeEventListener( 'DOMMouseScroll', onMouseWheel, false);    
             isEnable = false;
         }
         // override
@@ -282,5 +266,5 @@ define(function(require){
         this.onPovChanged = function(){};
 	}
 
-	return isMobile ? TouchController : DragController;
+	return util.isMobile ? TouchController : DragController;
 });

@@ -39,7 +39,8 @@ Four.ready(function(){
 
         for(var i = 0; i < max_x; i++){
             for(var j = 0; j < max_y; j++){
-                var tile_texture = new Four.GLTexture(getImageUrl(svid, i, j, z));
+                var tile_texture = new Four.GLTexture('../../image/earth.png');
+                //var tile_texture = new Four.GLTexture(getImageUrl(svid));
                 var tile = new Four.geometry.Sphere(radius, ws, hs, 
                                                     each_x_rad * i, each_x_rad, 
                                                     each_y_rad * j, each_y_rad);
@@ -55,9 +56,9 @@ Four.ready(function(){
                     }
                 })(tile));
                 //使用球内侧贴图,需要反转x轴坐标与贴图坐标的对应关系
-                tile.scale(-1, 1, 1);
+                //tile.scale(-1, 1, 1);
                 tile.bindTexture(tile_texture);
-                tile.setConstColor(255, 0, 0, 0);
+                tile.setConstColor(0, 0, 0, 0);
                 tile.update();
                 tiles.push(tile);
             }
@@ -65,29 +66,63 @@ Four.ready(function(){
         return tiles;
     }
 
-    var Panorama = function(container, svid){
+    var Earth = function(container, svid){
        
-        var camera =  new Four.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.01, 1000);
+        //var camera =  new Four.OrthograhicCamera(window.innerHeight / 2, window.innerWidth / 2, window.innerHeight / -2, window.innerWidth / -2, 0.01, 1000);
+        var camera =  new Four.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.01, 1000);
         var scene =  new Four.GLScene();
         var renderer = new Four.GLRender(container);
-        var dragController = new Four.plugin.DragController(camera, container);
-        renderer.enableAlpha();
+        //renderer.enableAlpha();
+        var controller = new Four.plugin.TrackballController(container, camera, 20);
 
-        createViewer(container, dragController);
+        camera.lookAt(0, 0, 0);
+        controller.setPosition(45, 45);
+
+        var balls = [];
+        //createViewer(container, dragController);
         
-        var thumb_tile = createTiles(svid, 2, 1)[0];
-        thumb_tile.texture.onload(function(){
-            var tiles = createTiles(svid, 1, 4);
-            tiles.forEach(function(t){
-                scene.add(t);
-            })
-        })
-        scene.add(thumb_tile);
 
-        camera.position.x = 0;
-        camera.position.y = 0;
-        camera.position.z = 0;
-        camera.lookAt(1, 0, 0);
+        var detla = 3;
+        var x = 2, 
+            y = 2, 
+            z = 2;
+        var offx = x * 0.5 * detla - 0.5 * detla;
+        var offy = y * 0.5 * detla - 0.5 * detla;
+        var offz = z * 0.5 * detla - 0.5 * detla;
+
+        for(var k = 0; k < z; k++){
+            for(var j = 0; j < y; j++){
+                for(var i = 0; i < x; i++){
+                    var thumb_tile = createTiles(svid, 1, 1)[0];
+                    thumb_tile.position( i * detla - offx, j * detla - offy, k * detla - offz);
+                    thumb_tile.update();
+                    scene.add(thumb_tile);
+                    balls.push(thumb_tile);
+                }
+            }
+        }
+
+
+        var cameraAng = 0;
+        var cameraRadius = 20;
+        var ANG_TO_RAD = Math.PI / 180;
+        var x, y = 8, z;
+        var ang = 0;
+
+        setInterval(function(){
+            ang += 3;
+            balls.forEach(function(b){
+                //b.reset().rotate(0, 1, 0, ang += 0.5).position();
+                b.reset().position().rotate(0, 1, 0, ang);
+            })
+            return;
+            cameraAng -= 1;
+            x = Math.cos(ANG_TO_RAD * cameraAng) * cameraRadius;
+            z = Math.sin(ANG_TO_RAD * cameraAng) * cameraRadius;
+            camera.setPosition(x, y, z);
+        }, 16);
+
+
         window.addEventListener('resize', function(){
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -102,5 +137,5 @@ Four.ready(function(){
 
 
 
-    window.Panorama = Panorama;
+    window.Earth = Earth;
 })
