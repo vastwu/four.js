@@ -25,7 +25,7 @@ define(function(require){
 
         this.modelMatrix = mat4.create();
 
-        this.setConstColor(0, 255, 0, 1);
+        this.setConstColor(255, 255, 255, 1);
 
         this.translate = {
             'position':[0, 0, 0],

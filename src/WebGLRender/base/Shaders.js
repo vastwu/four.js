@@ -30,12 +30,7 @@ define(function(){
         'varying vec2 vTextureCoord;',
         'uniform sampler2D uSampler;',
         'uniform bool uDrawTexture;',
-
-        //'uniform vec3 uDiffuse;',
-        //'uniform float uOpacity;',
-        //'uniform vec4 uRgba;',
         'uniform float uOpacity;',
-
         'void main(void){',
         '   if (uDrawTexture) {',
         '       vec4 texelColor = texture2D( uSampler, vTextureCoord);',

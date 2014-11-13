@@ -67,10 +67,12 @@ Four.ready(function(){
 
     var Panorama = function(container, svid){
        
-        var camera =  new Four.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.01, 1000);
+        var camera =  new Four.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.01, 1000);
         var scene =  new Four.GLScene();
         var renderer = new Four.GLRender(container);
         var dragController = new Four.plugin.DragController(camera, container);
+        var mouseTracker = new Four.plugin.MouseTracker(container, camera);
+        //scene.add(mouseTracker);
         renderer.enableAlpha();
 
         createViewer(container, dragController);
@@ -81,7 +83,7 @@ Four.ready(function(){
             tiles.forEach(function(t){
                 scene.add(t);
             })
-        })
+        });
         scene.add(thumb_tile);
 
         camera.position.x = 0;

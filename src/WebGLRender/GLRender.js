@@ -129,8 +129,14 @@ define(function(require){
         }else{
             gl.uniform1f(program.uniformOpacity, 1.0);
         }
-
         gl.drawArrays(gl[item.drawType], 0, item.numberOfVertices);
+    }
+    var drawDebugLine = function(gl, program, item){
+        //debug line
+        gl.uniform1i(program.uniformDrawTexture, false);
+        gl.disableVertexAttribArray(program.attr.color);
+        gl.vertexAttrib4f(program.attr.color, 1.0, 1.0, 1.0, 1.0);
+        gl.drawArrays(gl.LINES, 0, item.numberOfVertices);
     }
     var isSupport = function(){
         return true; 
@@ -146,7 +152,8 @@ define(function(require){
         return gl;
     }
 
-    var Render = function(container){
+    var Render = function(container, isDebug){
+        //isDebug = true;
         var canvas = this._canvas = document.createElement('canvas'); 
         var gl = this._gl = initGLContext(canvas);
         //启用深度测试
@@ -172,14 +179,28 @@ define(function(require){
             alpha: false
         }
 
-        var renderObjects = function(camera, renderList){
-            renderList.forEach(function(obj){
-                if(obj.children && obj.children.length > 0){
-                    renderObjects(camera, obj.children);
-                }else{
-                    draw(gl, glProgram, rendererStatus, obj, camera);
-                }
-            });           
+        var renderObjects;
+        if(isDebug){
+            renderObjects = function(camera, renderList){
+                renderList.forEach(function(obj){
+                    if(obj.children && obj.children.length > 0){
+                        renderObjects(camera, obj.children);
+                    }else{
+                        draw(gl, glProgram, rendererStatus, obj, camera);
+                        drawDebugLine(gl, glProgram, obj);
+                    }
+                });           
+            }
+        }else{
+            renderObjects = function(camera, renderList){
+                renderList.forEach(function(obj){
+                    if(obj.children && obj.children.length > 0){
+                        renderObjects(camera, obj.children);
+                    }else{
+                        draw(gl, glProgram, rendererStatus, obj, camera);
+                    }
+                });           
+            }
         }
         this.render = function(camera, scene){
             this.clear();

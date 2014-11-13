@@ -23,7 +23,7 @@
     	},
 	});
 
-	require([
+    var dependencies = [
 		'WebGLRender/GLScene',
     	'WebGLRender/GLRender',
 		'WebGLRender/GLTexture',
@@ -35,24 +35,26 @@
 		'WebGLRender/geometry/Face',
 		'WebGLRender/geometry/Sphere',
     	'WebGLRender/geometry/Triangle',
+    	'WebGLRender/geometry/Polygon',
+
     	'WebGLRender/plugin/DragController',
-    	'WebGLRender/plugin/TrackballController'
-	], function(){
+    	'WebGLRender/plugin/TrackballController',
+    	'WebGLRender/plugin/MouseTracker'
+    ];
+
+	require(dependencies, function(){
             var ag = [].slice.call(arguments);
-			Four.GLScene = ag[0];
-			Four.GLRender = ag[1];
-			Four.GLTexture = ag[2];
 
-			Four.PerspectiveCamera = ag[3];
-			Four.OrthograhicCamera = ag[4];
-
-			Four.geometry.Cube = ag[5];
-			Four.geometry.Face = ag[6];
-			Four.geometry.Sphere = ag[7];
-			Four.geometry.Triangle = ag[8];
-
-			Four.plugin.DragController = ag[9];
-			Four.plugin.TrackballController = ag[10];
+            dependencies.forEach(function(path, index){
+                var name = path.split('/').pop(); 
+                if(path.indexOf('geometry/') > -1){
+                    Four.geometry[name] = ag[index];
+                }else if(path.indexOf('plugin/') > -1){
+                    Four.plugin[name] = ag[index];
+                }else{
+                    Four[name] = ag[index];
+                }
+            })
 
 			Four.fireReady();
 		})

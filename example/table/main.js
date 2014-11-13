@@ -1,29 +1,29 @@
 Four.ready(function(){
-    var GLScene = Four.GLScene;
-    var GLRender = Four.GLRender;
-    var GLCamera = Four.GLCamera;
-
     var DragController = Four.plugin.DragController;
     
 
     var container = document.getElementById('container');
 
-    var camera =  new PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.01, 1000);
-    var scene =  new GLScene();
-    var renderer = new GLRender(container);
+    var camera =  new Four.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.01, 1000);
+    var scene =  new Four.GLScene();
+    var renderer = new Four.GLRender(container);
+    var controller = new Four.plugin.TrackballController(container, camera, 6);
+    camera.lookAt(0, 0, 0);
+    controller.setPosition(45, 45);
 
     renderer.enableAlpha();
 
     var table = new MyTable();
     scene.add(table);
 
+    var face = new Four.geometry.Face();
+    face.position(0, 2, 0);
+    face.setConstColor(0, 0, 255, 1);
+    scene.add(face);
 
-    //camera.setPosition(8, 5, 10);
-    camera.position.x = 0;
-    camera.position.y = 0;
-    camera.position.z = 0;
-    camera.lookAt(0, 0, 0);
-
+    var fill = new Four.geometry.Sphere(1, 30, 20);
+    fill.scale(1, 1, 0);
+    scene.add(fill);
 
     var draw = function(){
         requestAnimationFrame(draw);
@@ -44,7 +44,7 @@ Four.ready(function(){
             camera.setPosition(x, y, z);
         }, 10);
     };
-    around();
+    //around();
 
     window.onresize = function(){
         camera.aspect = window.innerWidth / window.innerHeight;
