@@ -1,7 +1,6 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
-    var glMatrix = require('WebGLRender/lib/glMatrix');
-    var mat4 = glMatrix.mat4;
+    var mat4 = require('WebGLRender/lib/mat4');
     //default is 三角形
     var Geometry = function(){
 

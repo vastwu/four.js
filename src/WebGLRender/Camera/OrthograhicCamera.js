@@ -1,6 +1,5 @@
 define(function(require){
-    var glMatrix = require('WebGLRender/lib/glMatrix');
-    var mat4 = glMatrix.mat4;
+    var mat4 = require('WebGLRender/lib/mat4');
     
     
     /**

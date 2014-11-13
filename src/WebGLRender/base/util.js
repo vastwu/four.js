@@ -1,9 +1,35 @@
 define(function(require){
+    var EVENTS, getPagePosition;
+    var isMobile = navigator.userAgent.toLowerCase().match(/iphone|android/);
+    if(isMobile){
+        EVENTS = {
+            'dragStart':'touchstart', 
+            'dragging':'touchmove', 
+            'dragEnd': 'touchend'
+        };
+        getPagePosition = function(e){
+            var evt = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0]; 
+            return {
+                x:evt.pageX,
+                y:evt.pageY
+            };
+        } 
+    }else{
+        EVENTS = {
+            'dragStart':'mousedown', 
+            'dragging':'mousemove', 
+            'dragEnd': 'mouseup'
+        };
+        getPagePosition = function(e){
+            return {
+                x: e.pageX,
+                y: e.pageY
+            }
+        };
+    }
+
     var util = {
-        isMobile:(function(){
-            var isMobile = navigator.userAgent.toLowerCase().match(/iphone|android/);
-            return isMobile ? true : false;
-        })(),
+        isMobile:isMobile ? true : false,
         normalize2: function(x, y){
             var out = {};
             var len = x * x + y * y;
@@ -47,8 +73,19 @@ define(function(require){
             this.clear = function(){
                 arr = [];
             }
+        },
+        $on: function(dom, evt, handler){
+            var _handler = function(e){
+                hander.call(dom, handler, e, getPagePosition(e)); 
+            }
+            dom.addEventListener(EVENTS[evt] ? EVENTS[evt] : evt, hander, false);
+            return _handler;
+        },
+        $off: function(dom, evt, handler){
+            dom.removeEvent(EVENTS[evt] ? EVENTS[evt] : evt, hander, false);
         }
-    }
+    };
+
 
     return util;
 })

@@ -16,13 +16,13 @@ define(function(require){
             doInertia = false;
 
         var updateLookAt = function(){
-            pitch = Math.max( - 85, Math.min( 85, pitch ) );
+            pitch = Math.max( - 20, Math.min( 80, pitch ) );
             heading = heading % 360;
             phi = ANG_TO_RAD * ( 90 - pitch );
             theta = ANG_TO_RAD * ( heading );
-            var x = 500 * Math.sin( phi ) * Math.cos( theta );
-            var y = 500 * Math.cos( phi );
-            var z = 500 * Math.sin( phi ) * Math.sin( theta );
+            var x = 1 * Math.sin( phi ) * Math.cos( theta );
+            var y = 1 * Math.cos( phi );
+            var z = 1 * Math.sin( phi ) * Math.sin( theta );
             camera.lookAt(x, y, z);
             self.onPovChanged(heading, pitch);
         }
