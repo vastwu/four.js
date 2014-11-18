@@ -13,14 +13,15 @@ define(function(require){
         var width = eventLayer.clientWidth;
         var height = eventLayer.clientHeight;
 
+        return;
         eventLayer.addEventListener('mousemove', function(e){
             var leftTop = camera.getVec3dFromScreenPixel(0, 0, width, height);
             var rightTop = camera.getVec3dFromScreenPixel(width, 0, width, height);
             var leftBottom = camera.getVec3dFromScreenPixel(0, height, width, height);
             var rightBottom = camera.getVec3dFromScreenPixel(width, height, width, height);
 
-            console.log(vector);
-        })
+            console.log(leftTop, rightTop, leftBottom, rightBottom);
+        });
 	}
 
     return MouseTracker;

@@ -74,7 +74,7 @@ define(function(require){
         //归一化
         vec3.normalize(vector, vector);
 
-        return vector;
+        return [vector[0], vector[1], vector[2]];
     }
 
     return Camera;

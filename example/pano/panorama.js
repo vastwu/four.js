@@ -27,6 +27,13 @@ Four.ready(function(){
         }
     })();
 
+    var getScreenPerspectivePosition = function(camera, width, height){
+        var leftTop = camera.getVec3dFromScreenPixel(0, 0, width, height);
+        var rightTop = camera.getVec3dFromScreenPixel(width, 0, width, height);
+        var leftBottom = camera.getVec3dFromScreenPixel(0, height, width, height);
+        var rightBottom = camera.getVec3dFromScreenPixel(width, height, width, height);
+        return [leftTop, rightTop, leftBottom, rightBottom];
+    }
     var getImageUrl = function(svid, x, y, z){
         return IMAGE_DOMAIN.replace('{svid}', svid)
                             .replace('{x}', x || 0)
@@ -87,14 +94,22 @@ Four.ready(function(){
     }
 
     var Panorama = function(container, svid){
+        var viewWidth = container.clientWidth;
+        var viewHeight = container.clientHeight;
        
-        var camera =  new Four.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.01, 1000);
+        var camera =  new Four.PerspectiveCamera(65, viewWidth / viewHeight, 0.01, 1000);
         var scene =  new Four.GLScene();
         var renderer = new Four.GLRender(container);
         var dragController = new Four.plugin.DragController(camera, container);
         var mouseTracker = new Four.plugin.MouseTracker(container, camera);
         //scene.add(mouseTracker);
         renderer.enableAlpha();
+
+        dragController.onDragging = function(heading, pitch){
+            var screen = getScreenPerspectivePosition(camera, viewWidth, viewHeight);
+            console.log(screen);
+        }
+
 
         createViewer(container, dragController);
         
