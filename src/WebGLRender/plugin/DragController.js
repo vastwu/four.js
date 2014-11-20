@@ -38,10 +38,11 @@ define(function(require){
             pos;
 
         var updateLookAt = function(){
-            pitch = Math.max( - 20, Math.min( 80, pitch ) );
+            pitch = Math.max( -20, Math.min( 80, pitch ) );
             heading = heading % 360;
             phi = ANG_TO_RAD * ( 90 - pitch );
             theta = ANG_TO_RAD * ( heading );
+            // heading = 0, [x, y, z] = [1, 0, 0]
             var x = 1 * Math.sin( phi ) * Math.cos( theta );
             var y = 1 * Math.cos( phi );
             var z = 1 * Math.sin( phi ) * Math.sin( theta );

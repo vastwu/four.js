@@ -85,7 +85,13 @@ define(function(require){
             dom.removeEvent(EVENTS[evt] ? EVENTS[evt] : evt, hander, false);
         }
     };
-
+    var ANG_TO_RAD = Math.PI / 180;
+    util.ang2rad = function(ang){
+        return ANG_TO_RAD * ang;
+    }
+    util.rad2ang = function(rad){
+        return rad / ANG_TO_RAD;
+    }
 
     return util;
 })

@@ -37,6 +37,7 @@ Four.ready(function(){
         var ws = SPHERE_WIDTH_SEGMENTS / max_x;
         var hs = SPHERE_HEIGHT_SEGMENTS / max_y;
 
+
         for(var i = 0; i < max_x; i++){
             for(var j = 0; j < max_y; j++){
                 var tile_texture = new Four.GLTexture('../../image/earth.png');
@@ -82,13 +83,15 @@ Four.ready(function(){
         //createViewer(container, dragController);
         
 
-        var detla = 3;
-        var x = 2, 
-            y = 2, 
-            z = 2;
+        var detla = 4;
+        var maxCount = 1;
+        var x = maxCount, 
+            y = maxCount, 
+            z = maxCount;
         var offx = x * 0.5 * detla - 0.5 * detla;
         var offy = y * 0.5 * detla - 0.5 * detla;
         var offz = z * 0.5 * detla - 0.5 * detla;
+
 
         for(var k = 0; k < z; k++){
             for(var j = 0; j < y; j++){
@@ -101,6 +104,7 @@ Four.ready(function(){
                 }
             }
         }
+    
 
 
         var cameraAng = 0;

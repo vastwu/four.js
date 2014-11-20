@@ -2,7 +2,8 @@ define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
 
     var Texture = function(src, useCrossOrigin){
-        useCrossOrigin = useCrossOrigin === false ? false : true;
+        this.src = src;
+        this.useCrossOrigin = useCrossOrigin === false ? false : true;
         this.isReady = false;
         this._onload = [];
 
@@ -15,19 +16,24 @@ define(function(require){
         //垂直填充方式
         this.wrapT = GL_CONST.CLAMP_TO_EDGE;
 
+
+    }
+    var tp = Texture.prototype;
+    tp.load = function(){
+        if(this.isReady !== false){
+            return;
+        }
         var image = new Image();
         var self = this;
         image.onload = function(){
             self._loadCompleted(this); 
         };
-        if(useCrossOrigin){
+        if(this.useCrossOrigin){
             image.crossOrigin = 'anonymous';
         }
-        image.src = src;
-
+        image.src = this.src;
+        return this;
     }
-    var tp = Texture.prototype;
-
     tp.onload = function(handler){
         this._onload.push(handler);
     }

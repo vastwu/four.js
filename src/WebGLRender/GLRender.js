@@ -96,6 +96,7 @@ define(function(require){
                 item.uvBuffer = uvBuffer;
             }
             if(texture.buffer){
+                //gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS)
                 //直接绑定和激活
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, texture.buffer);

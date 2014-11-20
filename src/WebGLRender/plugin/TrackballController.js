@@ -33,6 +33,7 @@ define(function(require){
         var pageX = 0;
         var pageY = 0;
         var doInertia = false;
+        var lastDraggingTime = null;
 
         var heading_stack = new util.DataStack(5);
         var pitch_stack = new util.DataStack(5);
@@ -87,6 +88,7 @@ define(function(require){
                 pitch += dy;
 
                 updateCamera(); 
+                lastDraggingTime = Date.now();
             }
         }
         var onDragEnd = function(e){
@@ -94,6 +96,9 @@ define(function(require){
             isUserInteracting = false;
             var h = heading_stack.getAverage();
             var p = pitch_stack.getAverage();
+            if(Date.now() - lastDraggingTime >= 100){
+                return;
+            }
             doInertia = setInterval(function(){
                 h *= 0.9;
                 p *= 0.9;
