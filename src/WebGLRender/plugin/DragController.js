@@ -147,6 +147,12 @@ define(function(require){
             eventLayer.removeEventListener( 'DOMMouseScroll', onMouseWheel, false);    
             isEnable = false;
         }
+
+        this.setFov = function(newHeading, newPitch){
+            heading = newHeading;
+            pitch = newPitch;
+            updateLookAt();
+        }
         // override
         this.onDragging = function(){};
         this.onDragStart = function(){};

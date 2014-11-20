@@ -63,10 +63,7 @@ Four.ready(function(){
         var view = document.createElement('div');
         view.style.cssText = 'border:1px solid red;position:absolute;padding:10px;left:0;top:0;z-index:999;color:white;background-color:rgba(0,0,0,0.8)';
         container.appendChild(view);
-
-        dragController.onPovChanged = function(heading, pitch){
-            view.innerHTML = 'heading:' + parseInt(heading) + ', pitch:' + parseInt(pitch); 
-        }
+        return view;
     }
     var createTiles = function(svid, radius, z){
         /*
@@ -137,15 +134,17 @@ Four.ready(function(){
         //scene.add(mouseTracker);
         renderer.enableAlpha();
 
-        var heading = 0;
+        var heading = -136;
         var pitch = 0;
 
-        dragController.onDragging = function(newHeading, newPitch){
+        var headingPitchViewer = createViewer(container, dragController);
+        dragController.onPovChanged = function(newHeading, newPitch){
             heading = newHeading;
             pitch = newPitch;
             updateViewPortTiles();
+            headingPitchViewer.innerHTML = 'heading:' + parseInt(heading) + ', pitch:' + parseInt(pitch); 
         }
-        createViewer(container, dragController);
+        
         
         var updateViewPortTiles = function(){
             var one;
@@ -156,8 +155,8 @@ Four.ready(function(){
             var scaleHeading = Math.abs(Math.sin(ang2rad(pitch)));
 
             var viewPitch = 90 - pitch; //to 0 - 90
-            var minX = (heading - fovXHalf) * (1 + scaleHeading);
-            var maxX = (heading + fovXHalf) * (1 + scaleHeading);
+            var minX = heading - fovXHalf * (1 + scaleHeading);
+            var maxX = heading + fovXHalf * (1 + scaleHeading);
 
             var minY = viewPitch - fovYHalf;
             var maxY = viewPitch + fovYHalf;
@@ -187,8 +186,6 @@ Four.ready(function(){
                     selected[k] = tiles[k];
                 }
             }
-            
-
             for(var name in selected){
                 scene.add(selected[name].item);
                 selected[name].item.texture.load();
@@ -199,7 +196,6 @@ Four.ready(function(){
         var thumb_tile = createTiles(svid, 2, 1)['0_0'].item;
         thumb_tile.texture.load().onload(function(){
             updateViewPortTiles();
-
         });
 
         scene.add(thumb_tile);
@@ -207,7 +203,8 @@ Four.ready(function(){
         camera.position.x = 0;
         camera.position.y = 0;
         camera.position.z = 0;
-        camera.lookAt(1, 0, 0);
+        // camera.lookAt(1, 0, 0);
+        dragController.setFov(heading, pitch);
         window.addEventListener('resize', function(){
             viewWidth = container.clientWidth;
             viewHeight = container.clientHeight;
