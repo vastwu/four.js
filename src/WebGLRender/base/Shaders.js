@@ -33,7 +33,7 @@ define(function(){
         'uniform float uOpacity;',
         'void main(void){',
         '   if (uDrawTexture) {',
-        '       vec4 texelColor = texture2D( uSampler, vTextureCoord);',
+        '       vec4 texelColor = texture2D(uSampler, vTextureCoord);',
         '       gl_FragColor = texelColor * vec4(1.0, 1.0, 1.0, uOpacity);',
         '   } else {',
         '       gl_FragColor = vec4(vColor.rgb, vColor.a * uOpacity);',

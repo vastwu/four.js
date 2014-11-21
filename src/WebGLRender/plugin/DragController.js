@@ -50,6 +50,7 @@ define(function(require){
             heading = heading % 360;
             phi = ANG_TO_RAD * ( 90 - pitch );
             theta = ANG_TO_RAD * ( heading );
+            // heading = 0, [x, y, z] = [1, 0, 0]
             var x = 1 * Math.sin( phi ) * Math.cos( theta );
             var y = 1 * Math.cos( phi );
             var z = 1 * Math.sin( phi ) * Math.sin( theta );
@@ -153,6 +154,12 @@ define(function(require){
             eventLayer.removeEventListener( 'mousewheel', onMouseWheel, false );
             eventLayer.removeEventListener( 'DOMMouseScroll', onMouseWheel, false);    
             isEnable = false;
+        }
+
+        this.setFov = function(newHeading, newPitch){
+            heading = newHeading;
+            pitch = newPitch;
+            updateLookAt();
         }
         // override
         this.onDragging = function(){};

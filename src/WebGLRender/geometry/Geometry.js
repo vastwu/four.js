@@ -1,6 +1,10 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
     var mat4 = require('WebGLRender/lib/mat4');
+
+    var toArray = function(arrLike){
+        return Array.prototype.slice.apply(null, arrLike);
+    }
     //default is 三角形
     var Geometry = function(){
 
@@ -192,6 +196,10 @@ define(function(require){
         this.numberOfVertices = this.vertices.length / this.positionSize;
 
         colors && this.setCustomColor(new_colors);
+    }
+    gp.merge = function(){
+        var geos = toArray(arguments);
+
     }
     Geometry.extend = function(Child){
         var F = function(){};
