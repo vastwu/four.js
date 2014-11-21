@@ -16,6 +16,18 @@ define(function(require){
         return indexesBuffer
     }
     */
+    var clampToMaxSize = function(image, maxSize){
+        if(image.width > maxSize || image.height > maxSize){
+            var scale = maxSize / Math.max(image.width, image.height);
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.floor(image.width * scale);
+            canvas.height = Math.floor(image.height * scale);
+            var context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
+            return canvas;
+        }         
+        return image
+    }
     var createGlTexture = function(gl, texture, texture_index){
         //初始化texture
         var textureBuffer = gl.createTexture();
@@ -32,6 +44,9 @@ define(function(require){
         //纹理过滤
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl[texture.magFilter]);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl[texture.minFilter]);
+
+
+        texture.image = clampToMaxSize(texture.image, gl.MAX_TEXTURE_SIZE);
 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
         //gl.generateMipmap( gl.TEXTURE_2D );
@@ -144,10 +159,10 @@ define(function(require){
     var initGLContext = function(canvas){
         var gl;
         try{ 
-            gl = canvas.getContext('experimental-webgl'); 
+            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl'); 
         }catch(e){}
         if(!gl){
-            return null;
+            return false;
         }
         return gl;
     }
@@ -156,6 +171,15 @@ define(function(require){
         //isDebug = true;
         var canvas = this._canvas = document.createElement('canvas'); 
         var gl = this._gl = initGLContext(canvas);
+        if(gl === false){
+            this.isSupport = function(){
+                return false;
+            }
+        }else{
+            this.isSupport = function(){
+                return true;
+            }
+        }
         //启用深度测试
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LESS);

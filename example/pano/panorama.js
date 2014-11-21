@@ -100,14 +100,16 @@ Four.ready(function(){
         var camera =  new Four.PerspectiveCamera(65, viewWidth / viewHeight, 0.01, 1000);
         var scene =  new Four.GLScene();
         var renderer = new Four.GLRender(container);
-        var dragController = new Four.plugin.DragController(camera, container);
-        var mouseTracker = new Four.plugin.MouseTracker(container, camera);
+        var dragController = new Four.plugin.DragController(camera, container, {
+            minPitch:-20,
+            maxPitch:50
+        });
         //scene.add(mouseTracker);
         renderer.enableAlpha();
 
         dragController.onDragging = function(heading, pitch){
             var screen = getScreenPerspectivePosition(camera, viewWidth, viewHeight);
-            console.log(screen);
+            //console.log(screen);
         }
 
 
@@ -127,7 +129,7 @@ Four.ready(function(){
         camera.position.x = 0;
         camera.position.y = 0;
         camera.position.z = 0;
-        camera.lookAt(0, 0, -1);
+        camera.lookAt(1, 0, 0);
         window.addEventListener('resize', function(){
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();

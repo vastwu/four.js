@@ -43,21 +43,21 @@
     ];
 
 	require(dependencies, function(){
-            var ag = [].slice.call(arguments);
+        var ag = [].slice.call(arguments);
 
-            dependencies.forEach(function(path, index){
-                var name = path.split('/').pop(); 
-                if(path.indexOf('geometry/') > -1){
-                    Four.geometry[name] = ag[index];
-                }else if(path.indexOf('plugin/') > -1){
-                    Four.plugin[name] = ag[index];
-                }else{
-                    Four[name] = ag[index];
-                }
-            })
+        dependencies.forEach(function(path, index){
+            var name = path.split('/').pop(); 
+            if(path.indexOf('geometry/') > -1){
+                Four.geometry[name] = ag[index];
+            }else if(path.indexOf('plugin/') > -1){
+                Four.plugin[name] = ag[index];
+            }else{
+                Four[name] = ag[index];
+            }
+        })
 
-			Four.fireReady();
-		})
+        Four.fireReady();
+    })
 
 	window.Four = Four;
 })();

@@ -23,7 +23,15 @@ define(function(require){
     }
 
 
-	var DragController = function (camera, eventLayer) {
+	var DragController = function (camera, eventLayer, options) {
+        options = util.merge({
+            'maxPitch':80,
+            'minPitch':-20
+        }, options); 
+
+        var maxPitch = options.maxPitch;
+        var minPitch = options.minPitch;
+
         var self = this;
         var heading_cache = new util.DataStack(5);
         var pitch_cache = new util.DataStack(5);
@@ -38,7 +46,7 @@ define(function(require){
             pos;
 
         var updateLookAt = function(){
-            pitch = Math.max( - 20, Math.min( 80, pitch ) );
+            pitch = Math.max( minPitch, Math.min( maxPitch, pitch ) );
             heading = heading % 360;
             phi = ANG_TO_RAD * ( 90 - pitch );
             theta = ANG_TO_RAD * ( heading );
@@ -155,5 +163,5 @@ define(function(require){
         this.enable();
 	}
 
-	return util.isMobile ? TouchController : DragController;
+	return DragController;
 });

@@ -1,40 +1,29 @@
-define([
-    'WebGLRender/GLScene',
-    'WebGLRender/GLRender',
-    'WebGLRender/GLTexture',
+define(function(){
+    var Four = {
+        geometry:{}, 
+        plugin:{}
+    };
+    Four.VER = "{{VER}}";
 
-    'WebGLRender/Camera/PerspectiveCamera',
-    'WebGLRender/Camera/OrthograhicCamera',
+    Four.GLScene = require('WebGLRender/GLScene');
+    Four.GLRender = require('WebGLRender/GLRender');
+    Four.GLTexture = require('WebGLRender/GLTexture')
 
-    'WebGLRender/geometry/Cube',
-    'WebGLRender/geometry/Face',
-    'WebGLRender/geometry/Sphere',
-    'WebGLRender/geometry/Triangle',
-    'WebGLRender/plugin/DragController'
-    'WebGLRender/plugin/TrackballController'
-], function(){
-        var Four = {
-            geometry:{}, 
-            plugin:{}, 
-        };
-        var ag = [].slice.call(arguments);
-        Four.GLScene = ag[0];
-        Four.GLRender = ag[1];
-        Four.GLTexture = ag[2];
+    Four.PerspectiveCamera = require('WebGLRender/Camera/PerspectiveCamera')
+    Four.OrthograhicCamera = require('WebGLRender/Camera/OrthograhicCamera')
 
-        Four.PerspectiveCamera = ag[3];
-        Four.OrthograhicCamera = ag[4];
+    Four.geometry.Cube = require('WebGLRender/geometry/Cube')
+    Four.geometry.Face = require('WebGLRender/geometry/Face')
+    Four.geometry.Sphere = require('WebGLRender/geometry/Sphere')
+    Four.geometry.Triangle = require('WebGLRender/geometry/Triangle')
+    Four.geometry.Polygon = require('WebGLRender/geometry/Polygon')
 
-        Four.geometry.Cube = ag[5];
-        Four.geometry.Face = ag[6];
-        Four.geometry.Sphere = ag[7];
-        Four.geometry.Triangle = ag[8];
+    Four.plugin.DragController = require('WebGLRender/plugin/DragController')
+    Four.plugin.TrackballController = require('WebGLRender/plugin/TrackballController')
+    Four.plugin.MouseTracker = require('WebGLRender/plugin/MouseTracker')
 
-        Four.plugin.DragController = ag[9];
-        Four.plugin.TrackballController = ag[10];
-
-        Four.ready = function(h){
-            h(Four) 
-        };
-        return Four;
-    });
+    Four.ready = function(h){
+        h(Four) 
+    };
+    return Four;
+});

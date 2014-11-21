@@ -74,6 +74,18 @@ define(function(require){
                 arr = [];
             }
         },
+        merge:function(){
+            var result = {}, a, k;
+            for(var i = 0, n = arguments.length; i < n; i++){
+                a = arguments[i];
+                if(a){
+                    for(k in a){
+                        result[k] = a[k]; 
+                    } 
+                }
+            } 
+            return result;
+        },
         $on: function(dom, evt, handler){
             var _handler = function(e){
                 hander.call(dom, handler, e, getPagePosition(e)); 
