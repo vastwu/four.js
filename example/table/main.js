@@ -13,17 +13,38 @@ Four.ready(function(){
 
     renderer.enableAlpha();
 
-    var table = new MyTable();
-    scene.add(table);
 
     var face = new Four.geometry.Face();
-    face.position(0, 2, 0);
+    face.position(0, 0, 0);
     face.setConstColor(0, 0, 255, 1);
+
+    face.vertices = [
+        -1.0, 1.0, 0.0,
+        -1.0, -1.0, 0.0,  
+        1.0, 1.0, 0.0, 
+
+        1.0, 1.0, 0.0,
+        -1.0, -1.0, 0.0,
+        1.0, -1.0, 0.0
+    ];
+
+    face.colors = [
+        255, 0, 0, 255,
+        0, 250, 6, 255,
+        0, 0, 255, 255,
+
+        255, 0, 0, 255,
+        0, 250, 6, 255,
+        0, 0, 255, 255
+    ];
+    face.numberOfVertices = 6;
     scene.add(face);
 
-    var fill = new Four.geometry.Sphere(1, 30, 20);
-    fill.scale(1, 1, 0);
-    scene.add(fill);
+    //var table = new MyTable();
+    //scene.add(table);
+    //var fill = new Four.geometry.Sphere(1, 30, 20);
+    //fill.scale(1, 1, 0);
+    //scene.add(fill);
 
     var draw = function(){
         requestAnimationFrame(draw);

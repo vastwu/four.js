@@ -26,11 +26,15 @@ define(function(require){
 	var DragController = function (camera, eventLayer, options) {
         options = util.merge({
             'maxPitch':80,
-            'minPitch':-20
+            'minPitch':-20,
+            'headingDragSpeed':0.1,
+            'pitchDragSpeed':0.1
         }, options); 
 
         var maxPitch = options.maxPitch;
         var minPitch = options.minPitch;
+        var headingDragSpeed = options.headingDragSpeed;
+        var pitchDragSpeed = options.pitchDragSpeed;
 
         var self = this;
         var heading_cache = new util.DataStack(5);
@@ -74,8 +78,8 @@ define(function(require){
         var onDragging = function(event){
             if ( isUserInteracting === true ) {
                 pos = getPagePosition(event);
-                var dh = ( onPointerDownPointerX - pos.x ) * 0.1;
-                var dp = ( pos.y - onPointerDownPointerY ) * 0.1;
+                var dh = ( onPointerDownPointerX - pos.x ) * headingDragSpeed;
+                var dp = ( pos.y - onPointerDownPointerY ) * pitchDragSpeed;
                 heading += dh;
                 pitch += dp;
 	               

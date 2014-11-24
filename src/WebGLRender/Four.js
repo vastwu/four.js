@@ -24,6 +24,8 @@
 	});
 
     var dependencies = [
+		'WebGLRender/base/util',
+
 		'WebGLRender/GLScene',
     	'WebGLRender/GLRender',
 		'WebGLRender/GLTexture',

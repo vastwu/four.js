@@ -95,6 +95,22 @@ define(function(require){
         },
         $off: function(dom, evt, handler){
             dom.removeEvent(EVENTS[evt] ? EVENTS[evt] : evt, hander, false);
+        },
+        extend: function(Parent, extend){
+            var F = function(){};
+            if(!extend.init){
+                throw new Error('extend need init handler'); 
+            }
+            var Child = extend.init;
+            delete Child.init;
+            F.prototype = Parent.prototype;
+            var p = new F();
+            for(var k in extend){
+                p[k] = extend[k];
+            }
+            Child.prototype = p;
+            Child.prototype.constructor = Child;
+            return Child;
         }
     };
     var ANG_TO_RAD = Math.PI / 180;

@@ -154,9 +154,6 @@ define(function(require){
         gl.vertexAttrib4f(program.attr.color, 1.0, 1.0, 1.0, 1.0);
         gl.drawArrays(gl.LINES, 0, item.numberOfVertices);
     }
-    var isSupport = function(){
-        return true; 
-    }
     var initGLContext = function(canvas){
         var gl;
         try{ 
@@ -172,15 +169,7 @@ define(function(require){
         //isDebug = true;
         var canvas = this._canvas = document.createElement('canvas'); 
         var gl = this._gl = initGLContext(canvas);
-        if(gl === false){
-            this.isSupport = function(){
-                return false;
-            }
-        }else{
-            this.isSupport = function(){
-                return true;
-            }
-        }
+        this.isSupport = Render.isSupportWebgl;
         //启用深度测试
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LESS);
@@ -232,6 +221,29 @@ define(function(require){
             renderObjects(camera, scene.children);
         }
     }
+
+    Render.isSupportWebgl = (function(){
+        var canvas = document.createElement('canvas'); 
+        var isSupport = true;
+        var gl;
+        try{ 
+            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl'); 
+        }catch(e){}
+        if(!gl){
+            isSupport = false;
+        }
+        canvas = null; gl = null;
+        if(isSupport === false){
+            return function(){
+                return false;
+            }
+        }else{
+            return function(){
+                return true;
+            }
+        }
+    })();
+
     var rp = Render.prototype;
     rp.enableAlpha = function(){
         //使用透明度支持

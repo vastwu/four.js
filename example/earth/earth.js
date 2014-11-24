@@ -56,6 +56,7 @@ Four.ready(function(){
                         }, 16);
                     }
                 })(tile));
+                tile_texture.load();
                 //使用球内侧贴图,需要反转x轴坐标与贴图坐标的对应关系
                 //tile.scale(-1, 1, 1);
                 tile.bindTexture(tile_texture);
@@ -84,7 +85,7 @@ Four.ready(function(){
         
 
         var detla = 4;
-        var maxCount = 1;
+        var maxCount = 6;
         var x = maxCount, 
             y = maxCount, 
             z = maxCount;

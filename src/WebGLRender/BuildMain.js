@@ -5,6 +5,8 @@ define(function(){
     };
     Four.VER = "{{VER}}";
 
+    Four.util = require('WebGLRender/base/util');
+
     Four.GLScene = require('WebGLRender/GLScene');
     Four.GLRender = require('WebGLRender/GLRender');
     Four.GLTexture = require('WebGLRender/GLTexture')

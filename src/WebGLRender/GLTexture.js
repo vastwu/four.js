@@ -15,8 +15,6 @@ define(function(require){
         this.wrapS = GL_CONST.CLAMP_TO_EDGE;
         //垂直填充方式
         this.wrapT = GL_CONST.CLAMP_TO_EDGE;
-
-
     }
     var tp = Texture.prototype;
     tp.load = function(){
