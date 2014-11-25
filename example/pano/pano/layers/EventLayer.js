@@ -26,8 +26,10 @@ define(function(require){
 
     var EventLayer = Four.util.extend(Layer, {
         init: function(container, options){
-            Layer.call(this, container, 2);
-            this.setSize('100%', '100%');
+            Layer.call(this, container, 3);
+
+            this.content.style.width = '100%'; 
+            this.content.style.height = '100%'; 
 
             var self = this;
             var eventLayer = this.content;
@@ -46,8 +48,8 @@ define(function(require){
                 self.onDragStart();
             }
             var onDragging = function(event){
+                pos = getPagePosition(event);
                 if ( isUserInteracting === true ) {
-                    pos = getPagePosition(event);
                     var dh = onPointerDownPointerX - pos.x;
                     var dp = pos.y - onPointerDownPointerY;
                        
@@ -55,6 +57,8 @@ define(function(require){
                     onPointerDownPointerY = pos.y;
                    
                     self.onDragging(dh, dp);
+                }else{
+                    self.onMoving(pos.x, pos.y);
                 }
             }
             var onDragEnd = function(event){
@@ -112,6 +116,7 @@ define(function(require){
             this.onPovChanged = function(){};
             this.onMouseWheel = function(){};
             this.onResize = function(width, height){};
+            this.onMoving = function(x, y){};
 
             this.enable();
 

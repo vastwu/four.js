@@ -1,6 +1,7 @@
 define(function(require){
-    var TileLayer = require('./TileLayer');
-    var EventLayer = require('./EventLayer');
+    var TileLayer = require('./layers/TileLayer');
+    var EventLayer = require('./layers/EventLayer');
+    var CanvasLayer = require('./layers/CanvasLayer');
     var PanoData = require('./PanoData');
 
     var util = Four.util;
@@ -13,6 +14,7 @@ define(function(require){
     }
 
     var Panorama = function(container, options){
+        var debugView = createViewer(container);
 
         options = util.merge({
             'heading':0,
@@ -43,13 +45,19 @@ define(function(require){
 
         var panoData = this.panoData = new PanoData();
         var tileLayer = this.tileLayer = new TileLayer(container, fov);
+        var canvasLayer = this.CanvasLayer = new CanvasLayer(container);
         var eventLayer = this.eventLayer = new EventLayer(container);
 
+
+        //updateView
         var updateLookAt = function(){
             pitch = Math.max( minPitch, Math.min( maxPitch, pitch ) );
             heading = heading % 360;
             tileLayer.setPov(heading, pitch);
+            debugView.innerHTML = 'heading:' + heading + ' ,pitch:' + pitch;
         }
+
+        //mouseevent
         eventLayer.onDragStart = function(){
             clearInterval(doDragInertia);
             heading_stack.clear();
@@ -111,27 +119,61 @@ define(function(require){
                 tileLayer.setFov(_fov);
             }, 16);
         }
+
+
+        var mouseTracker = {
+            'centerX':0,
+            'centerY':0,
+            'radius':60,
+            'scaleX':1,
+            'scaleY':0.3,
+            'visible':true,
+            'draw':function(context){
+                if(this.visible){
+                    context.beginPath();
+                    context.scale(this.scaleX, this.scaleY);
+                    context.arc(this.centerX / this.scaleX, this.centerY / this.scaleY, this.radius, 0, Math.PI * 2, true);
+                    context.closePath();
+                    context.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    context.strokeStyle = 'rgb(255, 255, 255)';
+                    context.lineWidth = 2;
+                    context.fill();
+                    context.stroke();
+                }
+            } 
+        };
+        canvasLayer.add(mouseTracker);
+
+        eventLayer.onMoving = function(x, y){
+            mouseTracker.centerX = x;
+            mouseTracker.centerY = y;
+            canvasLayer.redraw();
+        };
+        //resize
         eventLayer.onResize = function(width, height){
-            tileLayer.resize(width, height); 
+            tileLayer.emit('resize', [width, height]);
+            canvasLayer.emit('resize', [width, height]);
         }
+
+        //events
         tileLayer.on('thumb_loaded', function(){
 
         })
         panoData.on('sdata_loaded', function(sdata){
-            //heading = self.panoData.get('heading') + self.panoData.get('northDir');
-            //pitch = self.panoData.get('pitch');
-            //tileLayer.setSid(self.panoData.get('id'));
             heading = sdata.heading + sdata.northDir;
             pitch = sdata.pitch;
             tileLayer.setSid(sdata.id);
             updateLookAt();
         });
 
+        //interface
         pp.setPov = function(new_heading, new_pitch){
             heading = new_heading;
             pitch = new_pitch;
             updateLookAt();
         }
+
+        //init
         this.setSid(sid);
     }
     var pp = Panorama.prototype;

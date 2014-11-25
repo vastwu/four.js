@@ -1,7 +1,7 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
     var Geometry = require('WebGLRender/geometry/Geometry');
-    //立方体
+    //多边形
     var Polygon = Geometry.extend(function(){
 
         Geometry.call(this);

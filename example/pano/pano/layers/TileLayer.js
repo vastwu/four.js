@@ -1,6 +1,6 @@
 define(function(require){
     var Layer = require('./Layer');
-    var config = require('./config');
+    var config = require('./../config');
     var util = Four.util;
 
     var IMAGE_DOMAIN = config.PANO_TILE_URL;
