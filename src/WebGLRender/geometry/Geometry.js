@@ -94,6 +94,9 @@ define(function(require){
         return this;
     }
     gp.bindTexture = function(texture){
+        if(this.texture){
+            this.texture.dispose(); 
+        }
         this.texture = texture; 
         this.needUpdate = true;
         return this;

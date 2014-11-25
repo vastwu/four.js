@@ -2,8 +2,8 @@ Four.ready(function(){
 
     require(['./pano/Panorama.js'], function(Panorama){
         var container = document.getElementById('container');
-        var pano = new Panorama(container, {
-            'svid':'0100220000130829094125300J3'
+        var pano = window.pano = new Panorama(container, {
+            'sid':'01002200001308181010448555D'
         });
     });
    

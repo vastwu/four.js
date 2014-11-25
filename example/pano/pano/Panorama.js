@@ -1,6 +1,7 @@
 define(function(require){
     var TileLayer = require('./TileLayer');
     var EventLayer = require('./EventLayer');
+    var PanoData = require('./PanoData');
 
     var util = Four.util;
 
@@ -20,14 +21,14 @@ define(function(require){
             'fov':65,
             'maxPitch':80,
             'minPitch':-20,
-            'headingDragSpeed':0.1,
-            'pitchDragSpeed':0.1
+            'headingDragSpeed':0.07,
+            'pitchDragSpeed':0.07
         }, options); 
 
         var heading = options.heading;
         var pitch = options.pitch;
         var zoom = options.zoom;
-        var svid = options.svid;
+        var sid = options.sid;
         var fov = options.fov;
         var maxPitch = options.maxPitch;
         var minPitch = options.minPitch;
@@ -35,10 +36,12 @@ define(function(require){
         var pitchDragSpeed = options.pitchDragSpeed;
         var doDragInertia = 0;
         var doZoomInertia = 0;
+        var self = this;
 
-        var heading_stack = new util.DataStack(5);
-        var pitch_stack = new util.DataStack(5);
+        var heading_stack = new util.DataStack(10);
+        var pitch_stack = new util.DataStack(10);
 
+        var panoData = this.panoData = new PanoData();
         var tileLayer = this.tileLayer = new TileLayer(container, fov);
         var eventLayer = this.eventLayer = new EventLayer(container);
 
@@ -47,19 +50,19 @@ define(function(require){
             heading = heading % 360;
             tileLayer.setPov(heading, pitch);
         }
-        this.eventLayer.onDragStart = function(){
+        eventLayer.onDragStart = function(){
             clearInterval(doDragInertia);
             heading_stack.clear();
             pitch_stack.clear();
         };
-        this.eventLayer.onDragging = function(dh, dp){
+        eventLayer.onDragging = function(dh, dp){
             heading_stack.add(dh);
             pitch_stack.add(dp);
             heading += dh * headingDragSpeed;
             pitch += dp * pitchDragSpeed;
             updateLookAt();
         };
-        this.eventLayer.onDragEnd = function(){
+        eventLayer.onDragEnd = function(){
             var h = heading_stack.getAverage();
             var p = pitch_stack.getAverage();
             doDragInertia = setInterval(function(){
@@ -81,7 +84,7 @@ define(function(require){
                 }   
             }, 16);
         };
-        this.eventLayer.onMouseWheel = function(detail){
+        eventLayer.onMouseWheel = function(detail){
             clearInterval(doZoomInertia);
 
             var _fov;
@@ -108,14 +111,34 @@ define(function(require){
                 tileLayer.setFov(_fov);
             }, 16);
         }
-        
-        tileLayer.setSvid(svid);
-        tileLayer.setPov(0, 0);
+        eventLayer.onResize = function(width, height){
+            tileLayer.resize(width, height); 
+        }
+        tileLayer.on('thumb_loaded', function(){
+
+        })
+        panoData.on('sdata_loaded', function(sdata){
+            //heading = self.panoData.get('heading') + self.panoData.get('northDir');
+            //pitch = self.panoData.get('pitch');
+            //tileLayer.setSid(self.panoData.get('id'));
+            heading = sdata.heading + sdata.northDir;
+            pitch = sdata.pitch;
+            tileLayer.setSid(sdata.id);
+            updateLookAt();
+        });
+
+        pp.setPov = function(new_heading, new_pitch){
+            heading = new_heading;
+            pitch = new_pitch;
+            updateLookAt();
+        }
+        this.setSid(sid);
     }
     var pp = Panorama.prototype;
 
     pp.setSid = function(sid){
-
+        var self = this;
+        this.panoData.fetch(sid);
     }
 
     return Panorama;

@@ -75,6 +75,9 @@ define(function(require){
                 }
                 self.onMouseWheel(wd);
             }
+            var onResize = function(){
+                self.onResize(window.innerWidth, window.innerHeight); 
+            }
 
             this.enable = function(){
                 if(isEnable) {
@@ -86,6 +89,7 @@ define(function(require){
                 eventLayer.addEventListener(EVENTS.end, onDragEnd, false );
                 eventLayer.addEventListener( 'mousewheel', onMouseWheel, false );
                 eventLayer.addEventListener( 'DOMMouseScroll', onMouseWheel, false);
+                window.addEventListener( 'resize', onResize, false);
             }
 
             this.disable = function(){
@@ -97,6 +101,7 @@ define(function(require){
                 eventLayer.removeEventListener(EVENTS.end, onDragEnd, false );
                 eventLayer.removeEventListener( 'mousewheel', onMouseWheel, false );
                 eventLayer.removeEventListener( 'DOMMouseScroll', onMouseWheel, false);    
+                window.removeEventListener( 'resize', onResize, false);
                 isEnable = false;
             }
 
@@ -106,6 +111,7 @@ define(function(require){
             this.onDragEnd = function(){};
             this.onPovChanged = function(){};
             this.onMouseWheel = function(){};
+            this.onResize = function(width, height){};
 
             this.enable();
 

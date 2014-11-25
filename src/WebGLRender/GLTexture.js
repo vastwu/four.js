@@ -1,5 +1,6 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
+    var IS_DISPOST = {};
 
     var Texture = function(src, useCrossOrigin){
         this.src = src;
@@ -36,11 +37,18 @@ define(function(require){
         this._onload.push(handler);
     }
     tp._loadCompleted = function(image){
+        if(this.isReady === IS_DISPOST){
+            return; 
+        }
         this.image = image; 
         this.isReady = true;
         while(this._onload.length > 0){
             this._onload.shift()(this);
         }
+    }
+    tp.dispose = function(){
+        this._onload = []; 
+        this.isReady = IS_DISPOST;
     }
 
     return Texture;

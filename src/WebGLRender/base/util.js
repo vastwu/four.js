@@ -58,17 +58,27 @@ define(function(require){
                 if(arr.length >= max){
                     arr.shift();
                 }
-                arr.push(v);
+                arr.push({
+                    'value':v,
+                    'time':Date.now()
+                });
             }
             this.getAverage = function(){
                 var l = arr.length;
                 if(l == 0){
                     return 0; 
                 }
-                var sum = arr.reduce(function(sum, value){
-                    return sum + value;
+                var now = Date.now();
+                var n = 0;
+                var sum = 0;
+                arr.forEach(function(item){
+                    //废弃100ms以前的时间
+                    if(now - item.time <= 50){
+                        n++;
+                        sum += item.value;
+                    }
                 })
-                return sum / l;
+                return sum / n;
             }
             this.clear = function(){
                 arr = [];
