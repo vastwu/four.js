@@ -52,6 +52,12 @@ define(function(require){
         var updateLookAt = function(){
             pitch = Math.max( minPitch, Math.min( maxPitch, pitch ) );
             heading = heading % 360;
+
+            var result = self.onBeforePovChange(heading, pitch);
+            if(result !== undefined){
+                heading = result.heading;
+                pitch = result.pitch;
+            }
             phi = ANG_TO_RAD * ( 90 - pitch );
             theta = ANG_TO_RAD * ( heading );
             // heading = 0, [x, y, z] = [1, 0, 0]
@@ -170,6 +176,7 @@ define(function(require){
         this.onDragStart = function(){};
         this.onDragEnd = function(){};
         this.onPovChanged = function(){};
+        this.onBeforePovChange = function(){};
 
         this.enable();
 	}
