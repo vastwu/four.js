@@ -131,6 +131,16 @@ define(function(require){
             var renderer = new Four.GLRender(this.content);
             renderer.enableAlpha();
 
+
+            var fill = new Four.geometry.Polygon(0.5, 60);
+            fill.setConstColor(255, 255, 255, 0.8);
+            fill.position(2, 0, 0);
+            fill.rotate(0, 1, 0, 270);
+            scene.add(fill);
+
+
+
+
             var updateViewPortTiles = function(){
                 var one;
                 var headingFilted = {};

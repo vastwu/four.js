@@ -1,6 +1,8 @@
 define(function(require){
     var GL_CONST = require('WebGLRender/base/GL_CONST');
-    var mat4 = require('WebGLRender/lib/mat4');
+    var glMatrix = require('WebGLRender/lib/glMatrix');
+    var mat4 = glMatrix.mat4;
+    var quat = glMatrix.quat;
 
     var toArray = function(arrLike){
         return Array.prototype.slice.apply(null, arrLike);
@@ -64,6 +66,23 @@ define(function(require){
         }
         mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
         return this;
+    }
+    gp.rotate2 = function(rx, ry, rz){
+        var quatern = quat.create();
+        if(rx || rx === 0){
+            rx = rx * Math.PI / 180;
+            quatern = quat.rotateX(quatern, rx);
+        }
+        if(ry || ry === 0){
+            ry = ry * Math.PI / 180;
+            quatern = quat.rotateX(quatern, rx);
+        }
+        if(rz || rz === 0){
+            this.translate.rotate[2] = z;
+        }
+        if(angle || angle === 0){
+            this.translate.rotate.rad = angle * Math.PI / 180;
+        }
     }
     gp.rotate = function(x, y, z, angle){
         if(x || x === 0){
@@ -201,7 +220,7 @@ define(function(require){
         colors && this.setCustomColor(new_colors);
     }
     gp.merge = function(){
-        var geos = toArray(arguments);
+        //var geos = toArray(arguments);
 
     }
     Geometry.extend = function(Child){

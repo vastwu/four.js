@@ -38,13 +38,15 @@ Four.ready(function(){
         0, 0, 255, 255
     ];
     face.numberOfVertices = 6;
-    scene.add(face);
+    //scene.add(face);
 
-    //var table = new MyTable();
-    //scene.add(table);
+    var table = new MyTable();
+    scene.add(table);
     //var fill = new Four.geometry.Sphere(1, 30, 20);
-    //fill.scale(1, 1, 0);
-    //scene.add(fill);
+    var fill = new Four.geometry.Polygon();
+    fill.position(2, 0, 0);
+    fill.rotate(0, 1, 0, 270);
+    scene.add(fill);
 
     var draw = function(){
         requestAnimationFrame(draw);

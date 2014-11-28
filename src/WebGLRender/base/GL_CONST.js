@@ -1,6 +1,8 @@
 define(function(){
     var gl_const = {
     	'TRIANGLES':'TRIANGLES',
+        'TRIANGLES_FAN':'TRIANGLES_FAN',
+        'TRIANGLES_FAN':'TRIANGLES_STRIP',
     	'LINES':'LINES',
     	'LINES_LOOP':'LINES_LOOP',
     	'NEAREST':'NEAREST',

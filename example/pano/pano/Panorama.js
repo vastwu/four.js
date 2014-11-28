@@ -121,6 +121,7 @@ define(function(require){
         }
 
 
+        /*
         var mouseTracker = {
             'centerX':0,
             'centerY':0,
@@ -143,12 +144,15 @@ define(function(require){
             } 
         };
         canvasLayer.add(mouseTracker);
+        */
 
+        /*
         eventLayer.onMoving = function(x, y){
             mouseTracker.centerX = x;
             mouseTracker.centerY = y;
             canvasLayer.redraw();
         };
+        */
         //resize
         eventLayer.onResize = function(width, height){
             tileLayer.emit('resize', [width, height]);
@@ -160,8 +164,8 @@ define(function(require){
 
         })
         panoData.on('sdata_loaded', function(sdata){
-            heading = sdata.heading + sdata.northDir;
-            pitch = sdata.pitch;
+            //heading = sdata.heading + sdata.northDir;
+            //pitch = sdata.pitch;
             tileLayer.setSid(sdata.id);
             updateLookAt();
         });
@@ -180,7 +184,7 @@ define(function(require){
 
     pp.setSid = function(sid){
         var self = this;
-        this.panoData.fetch(sid);
+        //this.panoData.fetch(sid);
     }
 
     return Panorama;
