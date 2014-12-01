@@ -69,20 +69,25 @@ define(function(require){
     }
     gp.rotate2 = function(rx, ry, rz){
         var quatern = quat.create();
-        if(rx || rx === 0){
-            rx = rx * Math.PI / 180;
-            quatern = quat.rotateX(quatern, rx);
+        if(rx){
+            rx *= Math.PI / 180;
+        }else{
+            rx = 0;
         }
-        if(ry || ry === 0){
-            ry = ry * Math.PI / 180;
-            quatern = quat.rotateX(quatern, rx);
+        if(ry){
+            ry *= Math.PI / 180;
+        }else{
+            ry = 0;
         }
-        if(rz || rz === 0){
-            this.translate.rotate[2] = z;
+        if(rz){
+            rz *= Math.PI / 180;
+        }else{
+            rz = 0;
         }
-        if(angle || angle === 0){
-            this.translate.rotate.rad = angle * Math.PI / 180;
-        }
+        quat.fromYawPitchRoll(quatern, ry, rx, rz);
+
+        mat4.multiply(this.modelMatrix, this.modelMatrix, mat4.fromQuat(mat4.create(), quatern));
+        return this;
     }
     gp.rotate = function(x, y, z, angle){
         if(x || x === 0){
