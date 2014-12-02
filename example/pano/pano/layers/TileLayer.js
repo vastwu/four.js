@@ -135,7 +135,7 @@ define(function(require){
             var fill = new Four.geometry.Polygon(0.5, 60);
             fill.setConstColor(255, 255, 255, 0.8);
             fill.position(2, 0, 0);
-            fill.rotate(0, 1, 0, 270);
+            fill.rotate2(80, 270, 0);
             scene.add(fill);
 
 

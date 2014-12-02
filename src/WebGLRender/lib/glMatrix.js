@@ -4033,7 +4033,16 @@ quat.fromMat3 = function(out, m) {
 quat.str = function (a) {
     return 'quat(' + a[0] + ', ' + a[1] + ', ' + a[2] + ', ' + a[3] + ')';
 };
+quat.fromYawPitchRoll = function (out, yaw, pitch, roll) {
+    var cy = Math.cos(yaw / 2), sy = Math.sin(yaw / 2),
+        spcr = Math.sin(pitch / 2) * Math.cos(roll / 2), cpsr = Math.cos(pitch / 2) * Math.sin(roll / 2),
+        cpcr = Math.cos(pitch / 2) * Math.cos(roll / 2), spsr = Math.sin(pitch / 2) * Math.sin(roll / 2);
 
+    out[0] = cy * spcr + sy * cpsr;
+    out[1] = sy * cpcr - cy * spsr;
+    out[2] = cy * cpsr - sy * spcr;
+    out[3] = cy * cpcr + sy * spsr;
+}
 if(typeof(exports) !== 'undefined') {
     exports.quat = quat;
 }
