@@ -167,8 +167,12 @@ define(function(require){
         }
 
         this.setFov = function(newHeading, newPitch){
-            heading = newHeading;
-            pitch = newPitch;
+            if(newHeading || newHeading === 0){
+                heading = newHeading;
+            }
+            if(newPitch || newPitch === 0){
+                pitch = newPitch;
+            }
             updateLookAt();
         }
         // override
