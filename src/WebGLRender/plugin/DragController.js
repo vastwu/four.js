@@ -41,9 +41,9 @@ define(function(require){
         var pitch_cache = new util.DataStack(5);
 		eventLayer = eventLayer || document;
         var isUserInteracting = false,
-            onDragStartMouseX = 0, onDragStartMouseY = 0,
-            heading = 0, onDragStartLon = 0,
-            pitch = 0, onDragStartLat = 0,
+            onPointerDownPointerX = 0, onPointerDownPointerY = 0,
+            heading = 0,
+            pitch = 0,
             phi = 0, theta = 0,
             isEnable = false,
             doInertia = false,
@@ -77,8 +77,6 @@ define(function(require){
             isUserInteracting = true;
             onPointerDownPointerX = pos.x;
             onPointerDownPointerY = pos.y;
-            onPointerDownLon = heading;
-            onPointerDownLat = pitch;
             self.onDragStart(heading, pitch);
         }
         var onDragging = function(event){

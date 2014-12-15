@@ -85,7 +85,7 @@ Four.ready(function(){
         
 
         var detla = 4;
-        var maxCount = 6;
+        var maxCount = 1;
         var x = maxCount, 
             y = maxCount, 
             z = maxCount;
