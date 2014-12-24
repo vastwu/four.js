@@ -7,6 +7,7 @@ define(function(require){
         Geometry.call(this);
 
         this.drawType = GL_CONST.TRIANGLES;
+        this.type = 'Polygon';
 
         n = segments || 20;
         radius = radius || 0.5;

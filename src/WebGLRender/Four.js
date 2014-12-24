@@ -33,6 +33,7 @@
 		'WebGLRender/Camera/PerspectiveCamera',
 		'WebGLRender/Camera/OrthograhicCamera',
 
+		'WebGLRender/geometry/Geometry',
 		'WebGLRender/geometry/Cube',
 		'WebGLRender/geometry/Face',
 		'WebGLRender/geometry/Sphere',

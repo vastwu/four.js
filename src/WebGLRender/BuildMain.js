@@ -14,6 +14,7 @@ define(function(){
     Four.PerspectiveCamera = require('WebGLRender/Camera/PerspectiveCamera')
     Four.OrthograhicCamera = require('WebGLRender/Camera/OrthograhicCamera')
 
+    Four.geometry.Geometry = require('WebGLRender/geometry/Geometry')
     Four.geometry.Cube = require('WebGLRender/geometry/Cube')
     Four.geometry.Face = require('WebGLRender/geometry/Face')
     Four.geometry.Sphere = require('WebGLRender/geometry/Sphere')

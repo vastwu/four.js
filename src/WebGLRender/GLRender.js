@@ -143,6 +143,9 @@ define(function(require){
         }else{
             gl.uniform1f(program.uniformOpacity, 1.0);
         }
+        if(!gl[item.drawType]){
+            throw new Error('not draw type named ' + item.drawType + '!'); 
+        }
         gl.drawArrays(gl[item.drawType], 0, item.numberOfVertices);
     }
     var drawDebugLine = function(gl, program, item){
@@ -219,6 +222,9 @@ define(function(require){
                 });           
             }
         }
+
+
+
         this.render = function(camera, scene){
             this.clear();
             //camera matrix upload once in one frame

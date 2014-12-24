@@ -10,6 +10,7 @@ define(function(require){
     //default is 三角形
     var Geometry = function(){
 
+        this.type = 'Geometry';
         this.zIndex = 0;
         this.doubleSide = false;
         this.positionStartIndex = 0;

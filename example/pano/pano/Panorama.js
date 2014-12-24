@@ -121,15 +121,34 @@ define(function(require){
         }
 
         //探面
-
-        var mt = new MouseTracker();
-        mt.hide();
-        tileLayer.add3DOverlay(mt);
+        var tracker = new MouseTracker(0.4, 60);
+        tracker.hide();
+        tileLayer.add3DOverlay(tracker);
 
         eventLayer.onMoving = function(x, y){
             var pos = tileLayer.getVec3dFromScreenPixel(x, y);
-            mt.show();
-            mt.moveTo(pos);
+            tracker.show();
+            tracker.moveTo(pos);
+
+            //鼠标位置和球模型x轴正方向的夹角
+            var x = pos[0], z = pos[2];
+            var rad = Math.atan(Math.abs(z) / Math.abs(x));
+            var ang = rad * (180 / Math.PI);
+
+            if(x > 0 && z > 0){
+                //1
+                ang = ang;
+            }else if(x < 0 && z > 0){
+                //2
+                ang = 180 - ang;
+            }else if(x < 0 && z < 0){
+                //3
+                ang += 180; 
+            }else if(x > 0 && z < 0){
+                //4
+                ang = 360 - ang; 
+            }
+            console.log(ang, ang - panoData.get('northDir'));
         };
         //resize
         eventLayer.onResize = function(width, height){
@@ -141,7 +160,7 @@ define(function(require){
         tileLayer.on('thumb_loaded', function(){
         })
         panoData.on('sdata_loaded', function(sdata){
-            //修正指北角
+            //指向车头方向
             heading = sdata.heading + sdata.northDir;
             pitch = sdata.pitch;
             tileLayer.setSid(sdata.id);
@@ -150,9 +169,19 @@ define(function(require){
 
         //interface
         pp.setPov = function(new_heading, new_pitch){
-            heading = new_heading;
-            pitch = new_pitch;
+            if(new_heading || new_heading === 0){
+                heading = new_heading - panoData.get('northDir');
+            }
+            if(new_pitch || new_pitch === 0){
+                pitch = new_pitch;
+            }
             updateLookAt();
+        }
+        pp.getPov = function(){
+            return {
+                'heading':heading,
+                'pitch':pitch
+            }; 
         }
 
         //init
