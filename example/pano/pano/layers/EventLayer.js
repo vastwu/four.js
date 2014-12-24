@@ -57,6 +57,7 @@ define(function(require){
                     onPointerDownPointerY = pos.y;
                    
                     self.onDragging(dh, dp);
+                    self.onMoving(pos.x, pos.y);
                 }else{
                     self.onMoving(pos.x, pos.y);
                 }

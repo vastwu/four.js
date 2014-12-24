@@ -51,7 +51,7 @@ define(function(require){
                 })(tile));
                 */
                 //使用球内侧贴图,需要反转x轴坐标与贴图坐标的对应关系
-                tile.scale(-1, 1, 1);
+                tile.scale(-1, 1, 1).update();
                 //tile.bindTexture(tile_texture);
                 tile.setConstColor(255, 0, 0, 0);
                 //tiles.push(tile);
@@ -130,13 +130,6 @@ define(function(require){
             var scene =  new Four.GLScene();
             var renderer = new Four.GLRender(this.content);
             renderer.enableAlpha();
-
-
-            var fill = new Four.geometry.Polygon(0.5, 60);
-            fill.setConstColor(255, 255, 255, 0.8);
-            fill.position(2, 0, 0);
-            fill.rotate2(80, 270, 0);
-            scene.add(fill);
 
 
 
@@ -223,7 +216,7 @@ define(function(require){
                 if(!thumb_tile){
                     //thumb_tile = createTiles('', 2, 1)['0_0'].item;
                     thumb_tile = new Four.geometry.Sphere(5, SPHERE_WIDTH_SEGMENTS, SPHERE_HEIGHT_SEGMENTS);
-                    thumb_tile.scale(-1, 1, 1);
+                    thumb_tile.scale(-1, 1, 1).update();
                     thumb_tile.setConstColor(255, 0, 0, 0);
                     scene.add(thumb_tile);
                 }
@@ -259,13 +252,17 @@ define(function(require){
                 updateViewPortTiles();
             }
             this.on('resize', function(width, height){
-                width = width || this.content.clientWidth;
-                height = height || this.content.clientHeight;
+                viewWidth = width = width || this.content.clientWidth;
+                viewHeight = height = height || this.content.clientHeight;
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
                 renderer.viewPort(width, height);
             });
 
+            this.getVec3dFromScreenPixel = function(x, y){
+                var pos = camera.unProject(x, y, viewWidth, viewHeight);
+                return pos;
+            }
             this.add3DOverlay = function(obj){
                 scene.add(obj); 
             }

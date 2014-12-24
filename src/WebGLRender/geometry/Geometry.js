@@ -10,6 +10,7 @@ define(function(require){
     //default is 三角形
     var Geometry = function(){
 
+        this.zIndex = 0;
         this.doubleSide = false;
         this.positionStartIndex = 0;
         this.positionStep = 0;
@@ -35,7 +36,7 @@ define(function(require){
         this.translate = {
             'position':[0, 0, 0],
             'scale':[1, 1, 1],
-            'rotate':[0, 0, 0, 0]
+            'rotate':[0, 0, 0]
         };
 
         this.needUpdate = true;
@@ -51,7 +52,7 @@ define(function(require){
         if(z || z === 0){
             this.translate.scale[2] = z;
         }
-        mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);  
+        this.needUpdate = true;
         return this;
     }
     gp.position = function(x, y, z){
@@ -64,45 +65,31 @@ define(function(require){
         if(z || z === 0){
             this.translate.position[2] = z;
         }
-        mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
+        this.needUpdate = true;
         return this;
     }
-    gp.rotate2 = function(rx, ry, rz){
-        var quatern = quat.create();
+    /**
+     * 欧拉角旋转, 转换为四元数实现
+     *
+     * @param rx
+     * @param ry
+     * @param rz
+     * @return {instance}
+     */
+    gp.rotate = function(rx, ry, rz){
         if(rx){
             rx *= Math.PI / 180;
-        }else{
-            rx = 0;
+            this.translate.rotate[0] = rx;
         }
         if(ry){
             ry *= Math.PI / 180;
-        }else{
-            ry = 0;
+            this.translate.rotate[1] = ry;
         }
         if(rz){
             rz *= Math.PI / 180;
-        }else{
-            rz = 0;
+            this.translate.rotate[2] = rz;
         }
-        quat.fromYawPitchRoll(quatern, ry, rx, rz);
-
-        mat4.multiply(this.modelMatrix, this.modelMatrix, mat4.fromQuat(mat4.create(), quatern));
-        return this;
-    }
-    gp.rotate = function(x, y, z, angle){
-        if(x || x === 0){
-            this.translate.rotate[0] = x;
-        }
-        if(y || y === 0){
-            this.translate.rotate[1] = y;
-        }
-        if(z || z === 0){
-            this.translate.rotate[2] = z;
-        }
-        if(angle || angle === 0){
-            this.translate.rotate.rad = angle * Math.PI / 180;
-        }
-        mat4.rotate(this.modelMatrix, this.modelMatrix, this.translate.rotate.rad, this.translate.rotate);
+        this.needUpdate = true;
         return this;
     }
     gp.reset = function(){
@@ -111,10 +98,15 @@ define(function(require){
     }
     gp.update = function(){
         mat4.identity(this.modelMatrix);
-        mat4.rotate(this.modelMatrix, this.modelMatrix, this.translate.rotate.rad, this.translate.rotate);
         mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
+
+        var quatern = quat.create();
+        quat.fromYawPitchRoll(quatern, this.translate.rotate[0], this.translate.rotate[1], this.translate.rotate[2]);
+        mat4.multiply(this.modelMatrix, this.modelMatrix, mat4.fromQuat(mat4.create(), quatern));
+
         mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);  
-        this.needUpdate = true;
+
+        this.needUpdate = false;
         return this;
     }
     gp.bindTexture = function(texture){

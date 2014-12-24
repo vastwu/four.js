@@ -53,7 +53,7 @@ define(function(require){
         return textureBuffer;
     }
 
-    var draw = function(gl, program, rendererStatus, item, camera){
+    var draw = function(gl, program, rendererStatus, item){
         var verticesBuffer = item.verticesBuffer,
             indexesBuffer = item.indexesBuffer,
             textureBuffer,
@@ -92,8 +92,6 @@ define(function(require){
         */
 
         //上传变换矩阵
-        gl.uniformMatrix4fv(program.uniformMVMatrix, false, camera.viewMatrix);
-        gl.uniformMatrix4fv(program.uniformProjMatrix, false, camera.projectionMatrix);
         gl.uniformMatrix4fv(program.uniformItemMatrix, false, item.modelMatrix);
 
         var texture = item.texture, uvBuffer = item.uvBuffer;
@@ -152,7 +150,7 @@ define(function(require){
         gl.uniform1i(program.uniformDrawTexture, false);
         gl.disableVertexAttribArray(program.attr.color);
         gl.vertexAttrib4f(program.attr.color, 1.0, 1.0, 1.0, 1.0);
-        gl.drawArrays(gl.LINES, 0, item.numberOfVertices);
+        gl.drawArrays(gl.LINE_LOOP, 0, item.numberOfVertices);
     }
     var initGLContext = function(canvas){
         var gl;
@@ -191,33 +189,41 @@ define(function(require){
             doubleSide: false,
             enableAlpha: false,
             alpha: false
-        }
+        };
 
         var renderObjects;
+        var renderSortHanlder = function(a, b){
+            return a.zIndex > b.zIndex ? 1 : -1; 
+        };
         if(isDebug){
             renderObjects = function(camera, renderList){
+                renderList.sort(renderSortHanlder);
                 renderList.forEach(function(obj){
                     if(obj.children && obj.children.length > 0){
                         renderObjects(camera, obj.children);
                     }else{
-                        draw(gl, glProgram, rendererStatus, obj, camera);
+                        draw(gl, glProgram, rendererStatus, obj);
                         drawDebugLine(gl, glProgram, obj);
                     }
                 });           
             }
         }else{
             renderObjects = function(camera, renderList){
+                renderList.sort(renderSortHanlder);
                 renderList.forEach(function(obj){
                     if(obj.children && obj.children.length > 0){
                         renderObjects(camera, obj.children);
                     }else{
-                        draw(gl, glProgram, rendererStatus, obj, camera);
+                        draw(gl, glProgram, rendererStatus, obj);
                     }
                 });           
             }
         }
         this.render = function(camera, scene){
             this.clear();
+            //camera matrix upload once in one frame
+            gl.uniformMatrix4fv(glProgram.uniformMVMatrix, false, camera.viewMatrix);
+            gl.uniformMatrix4fv(glProgram.uniformProjMatrix, false, camera.projectionMatrix);
             renderObjects(camera, scene.children);
         }
     }

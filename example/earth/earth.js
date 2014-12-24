@@ -118,7 +118,7 @@ Four.ready(function(){
             ang += 3;
             balls.forEach(function(b){
                 //b.reset().rotate(0, 1, 0, ang += 0.5).position();
-                b.reset().position().rotate(0, 1, 0, ang);
+                b.reset().position().rotate(0, ang, 0);
             })
             return;
             cameraAng -= 1;

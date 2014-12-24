@@ -45,30 +45,31 @@ define(function(require){
     }
 
     /**
-     * getVec3dFromScreenPixel
-     * 屏幕坐标转是三维坐标
+     * 反投影，获取二维点的三维坐标
      * @param screenX
      * @param screenY
      * @param viewWidth
      * @param viewHeight
      * @return {undefined}
      */
-    cp.getVec3dFromScreenPixel = function(screenX, screenY, viewWidth, viewHeight){
-        var x = screenX - viewWidth / 2;
-        var y = viewHeight / 2 - screenY;
-        var p = util.normalize2(x, y);
+    cp.unProject = function(screenX, screenY, viewWidth, viewHeight){
+        var half_w = viewWidth / 2;
+        var half_h = viewHeight / 2;
+
+        var x = (screenX - half_w) / half_w;
+        var y = (half_h - screenY) / half_h;
 
         //逆投影矩阵
         var tpm = mat4.create();
-        mat4.transpose(tpm, this.projectionMatrix);
+        mat4.invert(tpm, this.projectionMatrix);
 
         //逆视口矩阵
         var tvm = mat4.create();
-        mat4.transpose(tvm, this.viewMatrix);
+        mat4.invert(tvm, this.viewMatrix);
         
         var vector = vec3.create();
         //反投影
-        vec3.transformMat4(vector, [p.x, p.y, -this.near], tpm);
+        vec3.transformMat4(vector, [x, y, -this.near], tpm);
         //反视口
         vec3.transformMat4(vector, vector, tvm);
         //归一化

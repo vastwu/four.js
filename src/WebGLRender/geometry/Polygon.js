@@ -37,13 +37,11 @@ define(function(require){
 
         }
 
-
         this.vertices = new Float32Array(vertices);
         this.indexes = new Float32Array(indexes);
 
 
         this.elementsToArray();
-       
 
 
         /*

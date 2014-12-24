@@ -2,6 +2,7 @@ define(function(require){
     var TileLayer = require('./layers/TileLayer');
     var EventLayer = require('./layers/EventLayer');
     var CanvasLayer = require('./layers/CanvasLayer');
+    var MouseTracker = require('./components/MouseTracker');
     var PanoData = require('./PanoData');
 
     var util = Four.util;
@@ -114,45 +115,22 @@ define(function(require){
                     clearInterval(doZoomInertia); 
                     zoom = zoomTarget;
                 }
-                console.log(zoom);
                 _fov = fov - (zoom - 3) * 20;
                 tileLayer.setFov(_fov);
             }, 16);
         }
 
+        //探面
 
-        /*
-        var mouseTracker = {
-            'centerX':0,
-            'centerY':0,
-            'radius':60,
-            'scaleX':1,
-            'scaleY':0.3,
-            'visible':true,
-            'draw':function(context){
-                if(this.visible){
-                    context.beginPath();
-                    context.scale(this.scaleX, this.scaleY);
-                    context.arc(this.centerX / this.scaleX, this.centerY / this.scaleY, this.radius, 0, Math.PI * 2, true);
-                    context.closePath();
-                    context.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                    context.strokeStyle = 'rgb(255, 255, 255)';
-                    context.lineWidth = 2;
-                    context.fill();
-                    context.stroke();
-                }
-            } 
-        };
-        canvasLayer.add(mouseTracker);
-        */
+        var mt = new MouseTracker();
+        mt.hide();
+        tileLayer.add3DOverlay(mt);
 
-        /*
         eventLayer.onMoving = function(x, y){
-            mouseTracker.centerX = x;
-            mouseTracker.centerY = y;
-            canvasLayer.redraw();
+            var pos = tileLayer.getVec3dFromScreenPixel(x, y);
+            mt.show();
+            mt.moveTo(pos);
         };
-        */
         //resize
         eventLayer.onResize = function(width, height){
             tileLayer.emit('resize', [width, height]);
@@ -161,11 +139,11 @@ define(function(require){
 
         //events
         tileLayer.on('thumb_loaded', function(){
-
         })
         panoData.on('sdata_loaded', function(sdata){
-            //heading = sdata.heading + sdata.northDir;
-            //pitch = sdata.pitch;
+            //修正指北角
+            heading = sdata.heading + sdata.northDir;
+            pitch = sdata.pitch;
             tileLayer.setSid(sdata.id);
             updateLookAt();
         });
@@ -184,7 +162,7 @@ define(function(require){
 
     pp.setSid = function(sid){
         var self = this;
-        //this.panoData.fetch(sid);
+        this.panoData.fetch(sid);
     }
 
     return Panorama;
