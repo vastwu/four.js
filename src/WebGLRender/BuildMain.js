@@ -23,7 +23,6 @@ define(function(){
 
     Four.plugin.DragController = require('WebGLRender/plugin/DragController')
     Four.plugin.TrackballController = require('WebGLRender/plugin/TrackballController')
-    Four.plugin.MouseTracker = require('WebGLRender/plugin/MouseTracker')
 
     Four.ready = function(h){
         h(Four) 

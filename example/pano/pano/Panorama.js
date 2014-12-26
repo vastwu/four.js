@@ -7,6 +7,10 @@ define(function(require){
 
     var util = Four.util;
 
+    var TRACKER_MIN_DISTANCE = 3;
+    var TRACKER_MAX_DISTANCE = 50;
+
+
     var createViewer = function(container, dragController){
         var view = document.createElement('div');
         view.style.cssText = 'border:1px solid red;position:absolute;padding:10px;left:0;top:0;z-index:999;color:white;background-color:rgba(0,0,0,0.8)';
@@ -26,7 +30,7 @@ define(function(require){
             'minPitch':-20,
             'headingDragSpeed':0.07,
             'pitchDragSpeed':0.07
-        }, options); 
+        }, options);
 
         var heading = options.heading;
         var pitch = options.pitch;
@@ -72,6 +76,7 @@ define(function(require){
             updateLookAt();
         };
         eventLayer.onDragEnd = function(){
+            //惯性
             var h = heading_stack.getAverage();
             var p = pitch_stack.getAverage();
             doDragInertia = setInterval(function(){
@@ -90,7 +95,7 @@ define(function(require){
                     clearInterval(doDragInertia);
                 }else{
                     updateLookAt();
-                }   
+                }
             }, 16);
         };
         eventLayer.onMouseWheel = function(detail){
@@ -99,7 +104,7 @@ define(function(require){
             var _fov;
             var zoomTarget = zoom;
             if(detail > 0){
-                zoomTarget = zoom + 1; 
+                zoomTarget = zoom + 1;
             }else if(detail < 0){
                 zoomTarget = zoom - 1;
             }
@@ -107,12 +112,12 @@ define(function(require){
             zoomTarget = Math.min(5, zoomTarget);
             var dz = (zoomTarget - zoom) / 10;
             if(dz === 0){
-                return; 
+                return;
             }
             doZoomInertia = setInterval(function(){
                 zoom += dz;
                 if((dz > 0 && zoom >= zoomTarget) || (dz < 0 && zoom <= zoomTarget)){
-                    clearInterval(doZoomInertia); 
+                    clearInterval(doZoomInertia);
                     zoom = zoomTarget;
                 }
                 _fov = fov - (zoom - 3) * 20;
@@ -126,29 +131,47 @@ define(function(require){
         tileLayer.add3DOverlay(tracker);
 
         eventLayer.onMoving = function(x, y){
-            var pos = tileLayer.getVec3dFromScreenPixel(x, y);
-            tracker.show();
-            tracker.moveTo(pos);
+            var vec3 = tileLayer.getVec3dFromScreenPixel(x, y);
+            var k = -1 / vec3[1];
+            var realX = vec3[0] * k;
+            var realZ = vec3[2] * k;
+            var distance = Math.sqrt(Math.pow(realX, 2) + Math.pow(realZ, 2));
+            if(vec3[1] > 0 || distance > TRACKER_MAX_DISTANCE || distance < TRACKER_MIN_DISTANCE){
+                //移动到Y正半轴或者超出min/max限定，则不再处理和显示
+                tracker.hide();
+                return;
+            }
 
+            var walkDistance = distance * 3;
+            tracker.setCenter(realX, -1, realZ);
+            tracker.show();
             //鼠标位置和球模型x轴正方向的夹角
-            var x = pos[0], z = pos[2];
+            var x = vec3[0], z = vec3[2];
             var rad = Math.atan(Math.abs(z) / Math.abs(x));
             var ang = rad * (180 / Math.PI);
-
-            if(x > 0 && z > 0){
-                //1
-                ang = ang;
-            }else if(x < 0 && z > 0){
-                //2
-                ang = 180 - ang;
-            }else if(x < 0 && z < 0){
-                //3
-                ang += 180; 
-            }else if(x > 0 && z < 0){
-                //4
-                ang = 360 - ang; 
+            //四个象限的atan对应的角度
+            if(x > 0){
+                if(z > 0){
+                    //1
+                    ang = ang;
+                }else{
+                    //4
+                    ang = 360 - ang;
+                }
+            }else{
+                if(z > 0){
+                    //2
+                    ang = 180 - ang;
+                }else{
+                    //3
+                    ang += 180;
+                }
             }
-            console.log(ang, ang - panoData.get('northDir'));
+            //鼠标位置与正北方向夹角
+            var angFromNorth = ang - panoData.get('northDir');
+            angFromNorth = angFromNorth < 0 ? 360 + angFromNorth : angFromNorth;
+
+            console.log(angFromNorth, walkDistance);
         };
         //resize
         eventLayer.onResize = function(width, height){
@@ -181,7 +204,7 @@ define(function(require){
             return {
                 'heading':heading,
                 'pitch':pitch
-            }; 
+            };
         }
 
         //init

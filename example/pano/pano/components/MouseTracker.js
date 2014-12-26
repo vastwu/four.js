@@ -2,12 +2,12 @@ define(function(){
 
     var Geometry = Four.geometry.Geometry;
 
-    var Border = Geometry.extend(function(radius, segments, width){
+    var TrackerBorder = Geometry.extend(function(radius, segments, width){
         Geometry.call(this);
         this.drawType = 'TRIANGLES'; //GL_CONST.TRIANGLES;
-        var n = segments || 20;
+        var n = segments;
 
-        var innerRadius = radius || 0.5;
+        var innerRadius = radius;
         var outerRadius = innerRadius + width;
 
         var rad, ix, iy, ox, oy, i, eachRad = Math.PI * 2 / n;
@@ -62,14 +62,14 @@ define(function(){
         this.setConstColor(255, 255, 255, 1);
     });
 
-    var Fill = Geometry.extend(function(radius, segments){
+    var TrackerFill = Geometry.extend(function(radius, segments){
 
         Geometry.call(this);
 
         this.drawType = 'TRIANGLES'; //GL_CONST.TRIANGLES;
 
-        var n = segments || 20;
-        radius = radius || 0.5;
+        var n = segments;
+        radius = radius;
 
         var rad, x, y, z, i, eachRad = Math.PI * 2 / n;
         var vertices = [0, 0, 0];
@@ -108,8 +108,10 @@ define(function(){
 
 
     var MouseTracker = function(radius, segments){
-        var border = new Border(radius, segments, 0.01); 
-        var fill = new Fill(radius, segments); 
+        radius = radius || 0.5;
+        segments = segments || 40;
+        var border = new TrackerBorder(radius, segments, 0.01); 
+        var fill = new TrackerFill(radius, segments); 
 
         this.zIndex = 2;
         this.children = [border, fill];
@@ -125,9 +127,8 @@ define(function(){
         this.hide = function(){
             border.opacity = fill.opacity = 0; 
         }
-        this.moveTo = function(vec3){
-            var k = -1 / vec3[1];
-            border.position(vec3[0] * k, vec3[1] * k, vec3[2] * k);
+        this.setCenter = function(x, y, z){
+            border.position(x, y, z);
             border.update();
             fill.modelMatrix = border.modelMatrix;
         }

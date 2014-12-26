@@ -42,7 +42,6 @@
 
     	'WebGLRender/plugin/DragController',
     	'WebGLRender/plugin/TrackballController',
-    	'WebGLRender/plugin/MouseTracker'
     ];
 
 	require(dependencies, function(){
