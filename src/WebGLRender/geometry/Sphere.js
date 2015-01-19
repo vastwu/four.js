@@ -10,7 +10,17 @@ define(function(require){
     	return r;
     }
 
-    //球
+    /**
+     * 球模型，由z轴负半轴,顺时针开始创建顶点
+     * @params radius 半径
+     * @params widthSegments 横向精度
+     * @params heightSegments 纵向精度
+     * @params phiStart 横向起始弧度
+     * @params phiLength 横向总长角度
+     * @params thetaStart 纵向起始弧度
+     * @params thetaLength 纵向总长角度
+     * @return {undefined}
+     */
     var Sphere = Geometry.extend(function(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength){
 
         Geometry.call(this);
@@ -42,22 +52,28 @@ define(function(require){
 
 				var u = x / widthSegments;
 				var v = y / heightSegments;
+                var _radius = radius * Math.sin( thetaStart + v * thetaLength );
 
-				_x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+                /*
+				_x = _radius * Math.cos( phiStart + u * phiLength );
 				_y = radius * Math.cos( thetaStart + v * thetaLength );
-				_z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+				_z = _radius * Math.sin( phiStart + u * phiLength );
+                */
+				_x = _radius * Math.sin( phiStart + u * phiLength );
+				_z = -_radius * Math.cos( phiStart + u * phiLength );
+				_y = radius * Math.cos( thetaStart + v * thetaLength );
 
 				vertices.push({
 					'x':_x,
 					'y':_y,
 					'z':_z,
 				});
-				
+
 				indexOfVertices++;
 				verticesRow.push(indexOfVertices);
 
                 uvsRow.push({
-                    'x':u, 
+                    'x':u,
                     'y':1 - v
                 });
 			}
@@ -66,8 +82,8 @@ define(function(require){
 		}
 
 		var vec1, vec3, vec3, vec4,
-			indexesOfSphere = [], 
-			indexesOfUvs = [], 
+			indexesOfSphere = [],
+			indexesOfUvs = [],
 			uvArray = [];
 
 		//两极临近的圈少一半的面，其余圈为切分个数的2倍个面数
@@ -85,7 +101,7 @@ define(function(require){
 		for ( y = 0; y < heightSegments; y ++ ) {
 			for ( x = 0; x < widthSegments; x ++ ) {
 				/*
-				2 1 
+				2 1
 				3 4
 				*/
 				//顶点索引
@@ -105,16 +121,15 @@ define(function(require){
 				vec4 = vertices[i4];
 
 				if(Math.abs(vec1.y) === radius){
-				//if(y === 0){
                     //北极
 					verticesArray[vn] 	  = vec1.x;
-					verticesArray[vn + 1] = vec1.y; 
+					verticesArray[vn + 1] = vec1.y;
 					verticesArray[vn + 2] = vec1.z;
 					verticesArray[vn + 3] = vec3.x;
-					verticesArray[vn + 4] = vec3.y; 
+					verticesArray[vn + 4] = vec3.y;
 					verticesArray[vn + 5] = vec3.z;
 					verticesArray[vn + 6] = vec4.x;
-					verticesArray[vn + 7] = vec4.y; 
+					verticesArray[vn + 7] = vec4.y;
 					verticesArray[vn + 8] = vec4.z;
 					vn += 9;
 
@@ -127,16 +142,15 @@ define(function(require){
 					uvArray[un + 5] = uv4.y;
 					un += 6;
 				}else if(Math.abs(vec3.y) === radius){
-				//}else if(y === heightSegmentsLess){
                     //南极
 					verticesArray[vn] 	  = vec1.x;
-					verticesArray[vn + 1] = vec1.y; 
+					verticesArray[vn + 1] = vec1.y;
 					verticesArray[vn + 2] = vec1.z;
 					verticesArray[vn + 3] = vec2.x;
-					verticesArray[vn + 4] = vec2.y; 
+					verticesArray[vn + 4] = vec2.y;
 					verticesArray[vn + 5] = vec2.z;
 					verticesArray[vn + 6] = vec3.x;
-					verticesArray[vn + 7] = vec3.y; 
+					verticesArray[vn + 7] = vec3.y;
 					verticesArray[vn + 8] = vec3.z;
 					vn += 9;
 
@@ -150,23 +164,23 @@ define(function(require){
 					un += 6;
 				}else{
 					verticesArray[vn] 	  = vec1.x;
-					verticesArray[vn + 1] = vec1.y; 
+					verticesArray[vn + 1] = vec1.y;
 					verticesArray[vn + 2] = vec1.z;
 					verticesArray[vn + 3] = vec2.x;
-					verticesArray[vn + 4] = vec2.y; 
+					verticesArray[vn + 4] = vec2.y;
 					verticesArray[vn + 5] = vec2.z;
 					verticesArray[vn + 6] = vec4.x;
-					verticesArray[vn + 7] = vec4.y; 
+					verticesArray[vn + 7] = vec4.y;
 					verticesArray[vn + 8] = vec4.z;
 
 					verticesArray[vn + 9] = vec2.x;
-					verticesArray[vn +10] = vec2.y; 
+					verticesArray[vn +10] = vec2.y;
 					verticesArray[vn +11] = vec2.z;
 					verticesArray[vn +12] = vec3.x;
-					verticesArray[vn +13] = vec3.y; 
+					verticesArray[vn +13] = vec3.y;
 					verticesArray[vn +14] = vec3.z;
 					verticesArray[vn +15] = vec4.x;
-					verticesArray[vn +16] = vec4.y; 
+					verticesArray[vn +16] = vec4.y;
 					verticesArray[vn +17] = vec4.z;
 					vn += 18;
 
@@ -202,8 +216,8 @@ define(function(require){
 
 /*
         var colors = [
-            255, 0, 0, 255,     
-            0, 250, 6, 255,     
+            255, 0, 0, 255,
+            0, 250, 6, 255,
             0, 0, 255, 255
         ];
         this.setCustomColor(colors);

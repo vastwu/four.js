@@ -1,8 +1,30 @@
 define(function(){
 
-
-
-    var util = {
+    var util_extends = {
+        'doNothing':function(){},
+        'animation':function(duration, timingFunction, renderer, fps){
+            var start = Date.now(), dt, progress;
+            var nextTick = requestAnimationFrame;
+            if(fps !== undefined){
+                var each = 1000 / fps;
+                nextTick = function(handler){
+                    setTimeout(function(){
+                        renderer();
+                    }, each);
+                };
+            }
+            var animHandler = function(){
+                dt = Date.now() - start;
+                progress = timingFunction(dt / duration);
+                if(dt < duration){
+                    nextTick(animHandler);
+                }else{
+                    progress = 1;
+                }
+                renderer(progress);
+            };
+            nextTick(animHandler);
+        },
         'toHumpCase':(function(){
             var cache = {};
             return function(str){
@@ -37,8 +59,38 @@ define(function(){
             }else{
                 return obj;
             }
+        },
+        /**
+         *
+         * @params a 对边
+         * @params b 临边
+         * @return {angle}
+         */
+        'getAngFromAB':function(a, b){
+            var rad = Math.atan(Math.abs(a) / Math.abs(b));
+            var ang = this.rad2ang(rad);// rad * (180 / Math.PI);
+            if(b > 0){
+                if(a > 0){
+                    //1
+                    ang = ang;
+                }else{
+                    //4
+                    ang = 360 - ang;
+                }
+            }else{
+                if(a > 0){
+                    //2
+                    ang = 180 - ang;
+                }else{
+                    //3
+                    ang += 180;
+                }
+            }
+            return ang;
         }
-    }
+    };
+
+    var util = Four.util.merge(Four.util, util_extends);
 
     return util;
 });

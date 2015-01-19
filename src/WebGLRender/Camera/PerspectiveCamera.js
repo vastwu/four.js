@@ -3,11 +3,12 @@ define(function(require){
     var glMatrix = require('WebGLRender/lib/glMatrix');
     var vec2 = glMatrix.vec2;
     var vec3 = glMatrix.vec3;
+    var vec4 = glMatrix.vec4;
     var mat4 = glMatrix.mat4;
 	var ANG_TO_RAD = Math.PI / 180;
-    
+
     var Camera = function(fovy, aspect, near, far){
-        this.fov = fovy * Math.PI / 180;
+        this.fov = fovy * ANG_TO_RAD;
         this.aspect = aspect;
         this.near = near;
         this.far = far;
@@ -45,6 +46,30 @@ define(function(require){
     }
 
     /**
+     * 正投影，获取物体的二维投影坐标
+     *
+     * @param x 点坐标x
+     * @param y 点坐标y
+     * @param z 点坐标z
+     * @param modelMatrix   物体变换矩阵
+     * @return [x, y, z, w]
+     */
+    cp.project = function(x, y, z, modelMatrix){
+        var out = [x, y, z, 1];
+        modelMatrix && vec4.transformMat4(out, out, modelMatrix);
+        vec4.transformMat4(out, out, this.viewMatrix);
+        if(out[2] >= 0){
+            //on back
+            return false;
+        }
+        vec4.transformMat4(out, out, this.projectionMatrix);
+        out[0] = out[0] / out[3];
+        out[1] = out[1] / out[3];
+        out[2] = out[2] / out[3];
+        out[3] = 1;
+        return out;
+    }
+    /**
      * 反投影，获取二维点的三维坐标
      * @param screenX
      * @param screenY
@@ -66,7 +91,7 @@ define(function(require){
         //逆视口矩阵
         var tvm = mat4.create();
         mat4.invert(tvm, this.viewMatrix);
-        
+
         var vector = vec3.create();
         //反投影
         vec3.transformMat4(vector, [x, y, -this.near], tpm);

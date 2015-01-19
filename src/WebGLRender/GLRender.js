@@ -2,7 +2,7 @@ define(function(require){
     var GLProgram = require('WebGLRender/GLProgram');
 
     var createGlVerticesBuffer = function(gl, vertices){
-        var bf = gl.createBuffer(); 
+        var bf = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, bf);
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         return bf;
@@ -25,7 +25,7 @@ define(function(require){
             var context = canvas.getContext('2d');
             context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
             return canvas;
-        }         
+        }
         return image
     }
     var createGlTexture = function(gl, texture, texture_index){
@@ -108,12 +108,14 @@ define(function(require){
                 gl.vertexAttribPointer(attr.textureCoord, 2, gl.FLOAT, false, 0, 0);
                 item.uvBuffer = uvBuffer;
             }
-            if(texture.buffer){
+            /*
+            if(texture.buffer && texture.needUpdate === false){
                 //gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS)
                 //直接绑定和激活
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, texture.buffer);
                 gl.uniform1i(program.uniformSampler, 0);
+                console.log('use old');
             }else{
                 //初始化texture
                 textureBuffer = createGlTexture(gl, texture)
@@ -121,7 +123,24 @@ define(function(require){
                 gl.uniform1i(program.uniformSampler, 0);
                 gl.bindTexture(gl.TEXTURE_2D, null);
                 texture.buffer = textureBuffer;
+                texture.needUpdate = false;
+                console.log('use new');
             }
+            */
+            if(!texture.buffer || texture.needUpdate === true){
+                //初始化texture
+                textureBuffer = createGlTexture(gl, texture)
+                //给第0个纹理设置 uSampler
+                gl.uniform1i(program.uniformSampler, 0);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+                texture.buffer = textureBuffer;
+                texture.needUpdate = false;
+            }
+            //gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS)
+            //绑定和激活
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, texture.buffer);
+            gl.uniform1i(program.uniformSampler, 0);
         }else{
             gl.disableVertexAttribArray(attr.textureCoord);
             gl.uniform1i(program.uniformDrawTexture, false);
@@ -138,13 +157,13 @@ define(function(require){
         }
 
         if(rendererStatus.enableAlpha){
-            var alpha = item.opacity === undefined ? 1.0 : item.opacity; 
+            var alpha = item.opacity === undefined ? 1.0 : item.opacity;
             gl.uniform1f(program.uniformOpacity, alpha);
         }else{
             gl.uniform1f(program.uniformOpacity, 1.0);
         }
         if(!gl[item.drawType]){
-            throw new Error('not draw type named ' + item.drawType + '!'); 
+            throw new Error('not draw type named ' + item.drawType + '!');
         }
         gl.drawArrays(gl[item.drawType], 0, item.numberOfVertices);
     }
@@ -157,8 +176,8 @@ define(function(require){
     }
     var initGLContext = function(canvas){
         var gl;
-        try{ 
-            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl'); 
+        try{
+            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl');
         }catch(e){}
         if(!gl){
             return false;
@@ -168,7 +187,7 @@ define(function(require){
 
     var Render = function(container, isDebug){
         //isDebug = true;
-        var canvas = this._canvas = document.createElement('canvas'); 
+        var canvas = this._canvas = document.createElement('canvas');
         var gl = this._gl = initGLContext(canvas);
         this.isSupport = Render.isSupportWebgl;
         //启用深度测试
@@ -176,8 +195,6 @@ define(function(require){
         gl.depthFunc(gl.LESS);
         //激活面剔除
         gl.enable(gl.CULL_FACE);
-        //启用融合
-        //gl.enable(gl.BLEND);
         //融合方式
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -196,30 +213,32 @@ define(function(require){
 
         var renderObjects;
         var renderSortHanlder = function(a, b){
-            return a.zIndex > b.zIndex ? 1 : -1; 
+            return a.zIndex > b.zIndex ? 1 : -1;
         };
         if(isDebug){
             renderObjects = function(camera, renderList){
-                renderList.sort(renderSortHanlder);
                 renderList.forEach(function(obj){
                     if(obj.children && obj.children.length > 0){
                         renderObjects(camera, obj.children);
                     }else{
-                        draw(gl, glProgram, rendererStatus, obj);
-                        drawDebugLine(gl, glProgram, obj);
+                        if(obj.needDraw === true){
+                            draw(gl, glProgram, rendererStatus, obj);
+                            drawDebugLine(gl, glProgram, obj);
+                        }
                     }
-                });           
+                });
             }
         }else{
             renderObjects = function(camera, renderList){
-                renderList.sort(renderSortHanlder);
                 renderList.forEach(function(obj){
                     if(obj.children && obj.children.length > 0){
                         renderObjects(camera, obj.children);
                     }else{
-                        draw(gl, glProgram, rendererStatus, obj);
+                        if(obj.needDraw === true){
+                            draw(gl, glProgram, rendererStatus, obj);
+                        }
                     }
-                });           
+                });
             }
         }
 
@@ -235,11 +254,11 @@ define(function(require){
     }
 
     Render.isSupportWebgl = (function(){
-        var canvas = document.createElement('canvas'); 
+        var canvas = document.createElement('canvas');
         var isSupport = true;
         var gl;
-        try{ 
-            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl'); 
+        try{
+            gl = canvas.getContext('experimental-webgl') || canvas.getContext('webgl');
         }catch(e){}
         if(!gl){
             isSupport = false;
@@ -275,6 +294,9 @@ define(function(require){
         this._canvas.width = width;
         this._canvas.height = height;
         this._gl.viewport(0, 0, width, height);
+    }
+    rp.setClearColor = function(r, g, b, a){
+        this._gl.clearColor(r / 255, g / 255, b / 255, a);
     }
     rp.clear = function(){
         this._gl.clear(this._gl.COLOR_BUFFER_BIT);

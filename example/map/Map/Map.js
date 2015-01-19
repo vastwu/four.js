@@ -15,7 +15,7 @@ define(function(require){
 
         var data = {};
         this._set = function(key, value){
-            data[key] = value; 
+            data[key] = value;
         }
         this._get = function(key){
             return data[key];
@@ -25,12 +25,15 @@ define(function(require){
         this._redraw = function(){
             var tilesDatas = getCoord(viewWidth, viewHeight, this._get('center'), this._get('zoom'), 256);
             var tiles = [];
-            tilesDatas.forEach(function(d){
-                var tile = new Tile(d.x, d.y, d.z); 
-                tile.drawX = d.drawX;
-                tile.drawY = d.drawY;
-                tile.size = d.size;
-                tiles.push(tile);
+            tilesDatas.forEach(function(d, index){
+                if(index === 0){
+                    //debug draw only one
+                    var tile = new Tile(d.x, d.y, d.z);
+                    tile.drawX = d.drawX;
+                    tile.drawY = d.drawY;
+                    tile.size = d.size;
+                    tiles.push(tile);
+                }
             });
             renderer.draw(tiles);
         }

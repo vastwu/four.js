@@ -23,7 +23,7 @@ define(function(require){
     }
 
     var Render = function(container){
-        var camera = new Four.GLCamera(55, container.clientWidth / container.clientHeight, 0.01, 1500);
+        var camera = new Four.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.01, 1500);
         var scene = new Four.GLScene();
         var renderer = new Four.GLRender(container);
         camera.position.x = 0;
@@ -52,6 +52,8 @@ define(function(require){
                 });
                 item.texture = texture;
                 return item;
+
+
                 var sizeNormailzed = normalize2(item.size, item.size);
                 var positionNormailzed = normalize2(item.drawX, item.drawY);
                 item.size = sizeNormailzed.x;
@@ -59,7 +61,7 @@ define(function(require){
                 item.drawX = positionNormailzed.x - 0.5;
                 item.drawY = positionNormailzed.y - 0.5;
                 return item;
-            });        
+            });
             drawList.forEach(function(item, index){
                 var obj = new Four.geometry.Face();
                 obj.bindTexture(item.texture);

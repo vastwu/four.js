@@ -9,22 +9,22 @@ define(function(require){
     sp.getChildren = function(){
         return this.children;
     }
+    sp.has = function(c){
+        return this.children.indexOf(c) === -1 ? false : true;
+    }
+    sp.insert = function(c){
+        this.children.unshift(c);
+    }
     sp.add = function(c){
-        this.children.push(c); 
+        this.children.push(c);
     }
     sp.remove = function(c){
-        for(var i = 0, n = this.children.length; i < n; i++){
-            if(c === this.children[i]){
-                this.children.splice(i, 1);
-                return c;
-            }
-        } 
+        var i = this.children.indexOf(c);
+        if(i !== -1) {
+            this.children.splice(i, 1);
+            return c;
+        }
         return null;
-    }
-    sp.include = function(tc){
-        return this.children.some(function(c){
-            return tc === c; 
-        })
     }
 
     return Scene;

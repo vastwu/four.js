@@ -1,5 +1,5 @@
 define(function(require){
-    var Layer = require('./Layer');
+    var Layer = require('pano/layers/Layer');
 
     var util = Four.util;
 	var ANG_TO_RAD = Math.PI / 180;
@@ -8,12 +8,12 @@ define(function(require){
     if(util.isMobile){
         EVENTS = {'start':'touchstart', 'moving':'touchmove', 'end': 'touchend'};
         getPagePosition = function(e){
-            var evt = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0]; 
+            var evt = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
             return {
                 x:evt.pageX,
                 y:evt.pageY
             };
-        } 
+        }
     }else{
         EVENTS = {'start':'mousedown', 'moving':'mousemove', 'end': 'mouseup'};
         getPagePosition = function(e){
@@ -44,43 +44,69 @@ define(function(require){
                 viewHeight = height || container.clientHeight;
                 canvas.width = viewWidth;
                 canvas.height = viewHeight;
+                self.redraw();
             }
             this.on('resize', onResize);
-            onResize();
 
+            var drawDelay = 0;
             var renderList = this.renderList = [];
 
-            var redraw = this.redraw = function(){
+            var pointerX, pointerY;
+
+            var draw = function(){
                 context.clearRect(0, 0, viewWidth, viewHeight);
                 renderList.forEach(function(obj){
-                    context.save(); 
-                    obj.draw(context); 
+                    context.save();
+                    obj.draw(context, viewWidth, viewHeight, pointerX, pointerY);
                     context.restore();
-                })
+                });
             }
-            /*
-            canvas.addEventListener('mousemove', function(e){
-                tracker.centerX = e.pageX;
-                tracker.centerY = e.pageY;
-                redraw();
-            });
-            */
-            //this.redraw();
-
+            var redraw = function(){
+                if(drawDelay){
+                    cancelAnimationFrame(drawDelay);
+                }
+                drawDelay = requestAnimationFrame(draw);
+            }
+            this.redraw = redraw;
+            this.updatePointerPosition = function(screenX, screenY){
+                pointerX = screenX;
+                pointerY = screenY;
+            }
             this.add = function(obj){
                 if(typeof obj.draw === 'function'){
-                    renderList.push(obj);    
-                } 
+                    renderList.push(obj);
+                }
             }
             this.remove = function(obj){
-                for(var i = 0, n = renderList.length; i < n; i++){
-                    if(obj === renderList[i]){
-                        renderList.splice(i, 1);
-                        return obj;
-                    }
-                } 
+                var i = renderList.indexOf(obj);
+                if(i !== -1) {
+                    renderList.splice(i, 1);
+                    return obj;
+                }
                 return null;
             }
+            this.clear = function(){
+                context.clearRect(0, 0, viewWidth, viewHeight);
+            }
+            //阻止后续的一切redraw行为，直至resume
+            this.stop = function(){
+                this.clear();
+                if(drawDelay){
+                    cancelAnimationFrame(drawDelay);
+                }
+                this.redraw = function(){};
+            }
+            //回复手动redraw
+            this.resume = function(){
+                this.redraw = redraw;
+                this.redraw();
+            }
+            /*
+            setInterval(function(){
+                redraw();
+            }, 32);
+            */
+            onResize();
         }
     });
     CanvasLayer.CanvasRenderItem = CanvasRenderItem;

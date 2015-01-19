@@ -1,9 +1,11 @@
 define(function(){
     var Four = {
-        geometry:{}, 
+        geometry:{},
         plugin:{}
     };
     Four.VER = "{{VER}}";
+
+    Four.glMatrix = require('WebGLRender/lib/glMatrix');
 
     Four.util = require('WebGLRender/base/util');
 
@@ -15,6 +17,8 @@ define(function(){
     Four.OrthograhicCamera = require('WebGLRender/Camera/OrthograhicCamera')
 
     Four.geometry.Geometry = require('WebGLRender/geometry/Geometry')
+    Four.geometry.GeometryGroup = require('WebGLRender/geometry/GeometryGroup')
+
     Four.geometry.Cube = require('WebGLRender/geometry/Cube')
     Four.geometry.Face = require('WebGLRender/geometry/Face')
     Four.geometry.Sphere = require('WebGLRender/geometry/Sphere')
@@ -25,7 +29,7 @@ define(function(){
     Four.plugin.TrackballController = require('WebGLRender/plugin/TrackballController')
 
     Four.ready = function(h){
-        h(Four) 
+        h(Four)
     };
     return Four;
 });

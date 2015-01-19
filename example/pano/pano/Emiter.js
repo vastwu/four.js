@@ -12,7 +12,7 @@ define(function(require, exports, beta) {
         this._eid = 'eid' + (++idIndex);
         eventHandlerStorage[this._eid] = {};
     };
- 
+
     Emiter.prototype = {
         /** @lends Emiter.prototype */
         /**
@@ -47,6 +47,14 @@ define(function(require, exports, beta) {
             }
             handlers[evt].push(handler);
             return handler;
+        },
+        once:function(evt, handler){
+            var self = this;
+            var onceHandler = function(){
+                handler.apply(this, arguments);
+                return true;
+            };
+            return this.on(evt, onceHandler);
         },
         /**
          * 移除监听事件
@@ -95,6 +103,6 @@ define(function(require, exports, beta) {
             eventHandlerStorage[this._eid] = {};
         }
     };
- 
+
     return Emiter;
 });

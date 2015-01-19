@@ -1,5 +1,6 @@
 define(function(require){
     var FEATURE_STYLE = require('./feature_style');
+    var PolygonTriangulation = require('./PolygonTriangulation');
     /*
      *  * 点、线、面、3d面、文本样式
      *   */
@@ -57,26 +58,72 @@ define(function(require){
             var x = 0;
             var y = 0;
             var z = 0;
+            /*
+             * data = [?, points, borderstyle, innerstyle, ?]
+             * */
             var pts = data[1];
-            var style0 = FEATURE_STYLE[data[3]];
-            var style1 = FEATURE_STYLE[data[4]];
-            var color = style0[1];
-            var borderLineStyle = style0[2];
+            var style0 = FEATURE_STYLE[data[3]];    //border
+            var style1 = FEATURE_STYLE[data[4]];    //inner
+
+            var color = style0[1]; //border color
+            var borderLineStyle = style0[2];    //border weight
             var drawOutline = true;
             var linePoints = [];
-            
-            x = pts[0] / 10;
-            y = pts[0] / 10;
 
+            x = pts[0] / 10;
+            y = pts[1] / 10;
+
+            /*
             if(borderLineStyle.length > 0){
                 //需要描边
                 drawOutline = true;
                 linePoints.push(x + col * 256, 256 - y + row * 256);
-            
             }
+            */
+            var spt = new PolygonTriangulation();
+            var arrVector2d = [{
+                    'x':x,
+                    'y':y
+                }],
+                ptKey = x + ',' + y,
+                objKey = { };
+            objKey[ptKey] = true;
+            for (var i = 2, l = pts.length; i < l; i += 2) {
+                x += pts[i] / 10;
+                y += pts[i + 1] / 10;
 
-        
-        }, 
+                //去掉重复点,以后可以让后台预处理数据去除掉，只保留good多边形
+                ptKey = x + ',' + y;
+                if(!objKey[ptKey]){
+                    arrVector2d.push({
+                        'x':x,
+                        'y':y
+                    });
+                    objKey[ptKey] = true;
+                }
+                /*
+                if (drawOutline) {
+                    linePoints.push(x + col * 256, 256 - y + row * 256);
+                    this._bufferData[key][style][color].linePoints.push(x + col * 256, 256 - y + row * 256, 0);
+                }
+                */
+            }
+            var triangles = spt.process(arrVector2d);
+            objKey = {};
+            var vertex = []
+            for (var k = 0; k < triangles.length; k+=3) {
+                vertex.push(triangles[k].x + col * 256,
+                            256 - triangles[k].y + row * 256,
+                            z);
+                vertex.push(triangles[k + 1].x + col * 256,
+                            256 - triangles[k + 1].y + row * 256,
+                            z);
+                vertex.push(triangles[k + 2].x + col * 256,
+                            256 - triangles[k + 2].y + row * 256,
+                            z);
+            }
+            return vertex;
+        },
         'parse':function(vtd, x, y, zoom, callback){
             //only draw bg
             vtd = vtd.bg;
@@ -87,9 +134,9 @@ define(function(require){
                 if(style0[0] === STYLE_TYPE_POLYGON){
                     //面数据
                     Parser.parsePolygon(data, x, y);
-                
+
                 }
-           
+
             });
         }
     };
@@ -103,7 +150,7 @@ define(function(require){
         if(t){
             return t;
         }
-        this.status = STATUS.unload; 
+        this.status = STATUS.unload;
         var port = (0.5 + Math.random() * 9) | 0;
         var url = IMG_DOMAIN.replace('{port}', port)
                     .replace('{x}', x)
@@ -123,14 +170,14 @@ define(function(require){
     var tp = Tile.prototype;
     tp.fetch = function(){
         if(this.status !== STATUS.unload){
-            return; 
+            return;
         }
         var url = this.url;
         this.status = STATUS.loading;
         var self = this;
         jsonp(url, function(result){
             Parser.parse(result.content, self.x, self.y, self.z, function(data){
-                console.log(data); 
+                console.log(data);
             });
         })
         return this;

@@ -11,7 +11,6 @@ define(function(require){
     var Geometry = function(){
 
         this.type = 'Geometry';
-        this.zIndex = 0;
         this.doubleSide = false;
         this.positionStartIndex = 0;
         this.positionStep = 0;
@@ -23,6 +22,7 @@ define(function(require){
 
         this.opacity = 1.0;
         this.drawType = GL_CONST.TRIANGLES;
+        this.needDraw = true;   //是否需要绘制
 
         this.vertices = new Float32Array();
         this.indexes = new Uint16Array();
@@ -99,22 +99,22 @@ define(function(require){
     }
     gp.update = function(){
         mat4.identity(this.modelMatrix);
-        mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position); 
+        mat4.translate(this.modelMatrix, this.modelMatrix, this.translate.position);
 
         var quatern = quat.create();
-        quat.fromYawPitchRoll(quatern, this.translate.rotate[0], this.translate.rotate[1], this.translate.rotate[2]);
+        quat.fromYawPitchRoll(quatern, this.translate.rotate[1], this.translate.rotate[0], this.translate.rotate[2]);
         mat4.multiply(this.modelMatrix, this.modelMatrix, mat4.fromQuat(mat4.create(), quatern));
 
-        mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);  
+        mat4.scale(this.modelMatrix, this.modelMatrix, this.translate.scale);
 
         this.needUpdate = false;
         return this;
     }
     gp.bindTexture = function(texture){
         if(this.texture){
-            this.texture.dispose(); 
+            this.texture.dispose();
         }
-        this.texture = texture; 
+        this.texture = texture;
         this.needUpdate = true;
         return this;
     }
@@ -125,7 +125,7 @@ define(function(require){
         //vertex size in float
         var vsif = vsib / Float32Array.BYTES_PER_ELEMENT;
         var vertices = this.vertices;
-        
+
         var buffer = new ArrayBuffer(this.numberOfVertices * vsib);
         var positionView = new Float32Array(buffer);
         var colorView = new Uint8Array(buffer);
@@ -178,8 +178,8 @@ define(function(require){
             return;
         }
         var new_uvs = new Float32Array(indexes.length * 2),
-            new_vs = new Float32Array(indexes.length * 3), 
-            new_colors = new Float32Array(indexes.length * 4), 
+            new_vs = new Float32Array(indexes.length * 3),
+            new_colors = new Float32Array(indexes.length * 4),
             ui, vi, ci,
             tui = 0, tvi = 0, tci = 0;
 
@@ -205,7 +205,7 @@ define(function(require){
                     new_uvs[tui + 1] = uv[ui + 1];
                     tui += 2;
                 }
-            }      
+            }
 
 
         this.indexes = null;

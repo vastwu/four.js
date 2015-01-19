@@ -86,13 +86,13 @@ define(function(){
             vertices.push(z);
 
             if(i < n - 1){
-                indexes.push(0); 
-                indexes.push(i + 1); 
-                indexes.push(i + 2); 
+                indexes.push(0);
+                indexes.push(i + 1);
+                indexes.push(i + 2);
             }else{
-                indexes.push(0); 
-                indexes.push(n); 
-                indexes.push(1); 
+                indexes.push(0);
+                indexes.push(n);
+                indexes.push(1);
             }
 
         }
@@ -110,29 +110,60 @@ define(function(){
     var MouseTracker = function(radius, segments){
         radius = radius || 0.5;
         segments = segments || 40;
-        var border = new TrackerBorder(radius, segments, 0.01); 
-        var fill = new TrackerFill(radius, segments); 
+        var border = new TrackerBorder(radius, segments, 0.01);
+        var fill = new TrackerFill(radius, segments);
 
-        this.zIndex = 2;
         this.children = [border, fill];
+
 
         border.position(3, 0, 1);
         border.rotate(-90, 270, 0);
-        border.opacity = fill.opacity = 0;
+        border.opacity = 1;
+        fill.opacity = 0.7;
 
+        //2d 文本
+        var moveText2D = this.text = {
+            x:200,
+            y:200,
+            text:'',
+            needDraw:true,
+            draw:function(ctx){
+                if(this.needDraw){
+                    ctx.shadowOffsetX = 3;
+                    ctx.shadowOffsetY = 3;
+                    ctx.shadowColor = "RGBA(0, 0, 0, 1)";
+                    ctx.shadowBlur = 4;
+                    ctx.fillStyle = '#FFF';
+                    //ctx.strokeStyle = '#000';
+                    ctx.font = '16px sans-serif';
+                    ctx.textAlign = "center";
+                    ctx.fillText(this.text, this.x, this.y);
+                }
+            }
+        };
         this.show = function(){
-            border.opacity = 1;
-            fill.opacity = 0.7; 
+            border.needDraw = fill.needDraw = true;
+            moveText2D.needDraw = true;
         }
         this.hide = function(){
-            border.opacity = fill.opacity = 0; 
+            border.needDraw = fill.needDraw = false;
+            moveText2D.needDraw = false;
+        }
+        this.isVisible = function(){
+            return border.needDraw === true;
         }
         this.setCenter = function(x, y, z){
             border.position(x, y, z);
             border.update();
             fill.modelMatrix = border.modelMatrix;
         }
-
+        this.setScreenPosition = function(x, y){
+            moveText2D.x = x;
+            moveText2D.y = y + 40;
+        }
+        this.setText = function(text){
+            moveText2D.text = text;
+        }
     }
 
     return MouseTracker;

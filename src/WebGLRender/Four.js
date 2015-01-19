@@ -1,5 +1,5 @@
 (function(){
-	
+
 	var _handlers = [];
 	var Four = {
 		geometry:{},
@@ -24,6 +24,7 @@
 	});
 
     var dependencies = [
+		'WebGLRender/lib/glMatrix',
 		'WebGLRender/base/util',
 
 		'WebGLRender/GLScene',
@@ -39,6 +40,7 @@
 		'WebGLRender/geometry/Sphere',
     	'WebGLRender/geometry/Triangle',
     	'WebGLRender/geometry/Polygon',
+    	'WebGLRender/geometry/GeometryGroup',
 
     	'WebGLRender/plugin/DragController',
     	'WebGLRender/plugin/TrackballController',
@@ -48,7 +50,7 @@
         var ag = [].slice.call(arguments);
 
         dependencies.forEach(function(path, index){
-            var name = path.split('/').pop(); 
+            var name = path.split('/').pop();
             if(path.indexOf('geometry/') > -1){
                 Four.geometry[name] = ag[index];
             }else if(path.indexOf('plugin/') > -1){
